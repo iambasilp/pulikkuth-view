@@ -89,7 +89,7 @@ function renderResults(results) {
         <div class="result-item" onclick="viewDetails('${item.LOCATION || ''}','${escapeHtml(JSON.stringify(item))}')">
             <div class="result-info">
                 <h4>${item['CUSTOMER NAME']}</h4>
-                <p>${item.PLACE} • ${item.ROUTE}</p>
+                <p>${item.PLACE}</p>
             </div>
             <i class="fa-solid fa-chevron-right result-arrow"></i>
         </div>
@@ -107,17 +107,8 @@ window.viewDetails = (location, itemStr) => {
     // Decode the item
     const item = JSON.parse(decodeHtml(itemStr));
 
-    // Populate Drawer
-    // Handle Avatar (check if valid URL or just filename)
-    let avatarSrc = item.PHOTO;
-    if (!avatarSrc || !avatarSrc.startsWith('http')) {
-        // If empty or local file, use UI Avatars fallback
-        avatarSrc = `https://ui-avatars.com/api/?name=${encodeURIComponent(item['CUSTOMER NAME'])}&background=random`;
-    }
-
     els.drawerContent.innerHTML = `
         <div class="drawer-profile-header" style="text-align:center; margin-bottom:20px;">
-            <img src="${avatarSrc}" style="width:80px; height:80px; border-radius:50%; margin-bottom:10px; object-fit:cover;">
             <h2 style="margin-bottom:5px;">${item['CUSTOMER NAME']}</h2>
             <p style="color:var(--text-secondary);">${item.CATEGORY}</p>
         </div>
