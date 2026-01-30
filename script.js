@@ -9,15 +9,63 @@ const els = {
     drawerContent: document.getElementById('drawerContent'),
     closeDrawer: document.getElementById('closeDrawer'),
     drawerCall: document.getElementById('drawerCall'),
-    drawerLoc: document.getElementById('drawerLoc')
+    drawerLoc: document.getElementById('drawerLoc'),
+    voiceBtn: document.getElementById('voiceBtn')
 };
 
 // Initialize
 function init() {
     setGreeting();
+    updateDataStatus();
     setupListeners();
+    setupVoiceSearch();
     // Optional: Focus input on load
     els.input.focus();
+}
+
+function updateDataStatus() {
+    const statusEl = document.getElementById('dataStatus');
+    if (statusEl) {
+        statusEl.innerText = `Searching database of ${data.length.toLocaleString()} customers`;
+        statusEl.style.opacity = '1';
+    }
+}
+
+function setupVoiceSearch() {
+    const voiceBtn = document.getElementById('voiceBtn');
+    if (!('webkitSpeechRecognition' in window)) {
+        voiceBtn.style.display = 'none'; // Hide if not supported
+        return;
+    }
+
+    const recognition = new webkitSpeechRecognition();
+    recognition.continuous = false;
+    recognition.lang = 'en-US';
+
+    voiceBtn.addEventListener('click', () => {
+        if (voiceBtn.classList.contains('listening')) {
+            recognition.stop();
+        } else {
+            recognition.start();
+        }
+    });
+
+    recognition.onstart = () => {
+        voiceBtn.classList.add('listening');
+        els.input.placeholder = "Listening...";
+    };
+
+    recognition.onend = () => {
+        voiceBtn.classList.remove('listening');
+        els.input.placeholder = "Search by Name, Place, or Phone...";
+        els.input.focus();
+    };
+
+    recognition.onresult = (event) => {
+        const transcript = event.results[0][0].transcript;
+        els.input.value = transcript;
+        els.input.dispatchEvent(new Event('input')); // Trigger search
+    };
 }
 
 function setGreeting() {
@@ -40,7 +88,7 @@ function setupListeners() {
         const query = e.target.value.trim().toLowerCase();
 
         if (query.length === 0) {
-            showHistory(); // Back to history if cleared
+            showHistoryAndFavorites(); // Show both
             return;
         }
 
@@ -49,7 +97,7 @@ function setupListeners() {
 
     // Close Dropdown when clicking outside
     document.addEventListener('click', (e) => {
-        if (!els.input.contains(e.target) && !els.results.contains(e.target)) {
+        if (!els.input.contains(e.target) && !els.results.contains(e.target) && e.target.id !== 'voiceBtn' && !e.target.closest('#voiceBtn')) {
             hideResults();
         }
     });
@@ -58,6 +106,8 @@ function setupListeners() {
     els.input.addEventListener('focus', () => {
         if (els.input.value.trim().length > 0) {
             els.results.classList.remove('hidden');
+        } else {
+            showHistoryAndFavorites();
         }
     });
 
@@ -120,13 +170,111 @@ function debounce(func, wait) {
     };
 }
 
+// --- Favorites Management ---
+function getFavorites() {
+    try {
+        return JSON.parse(localStorage.getItem('favoriteCustomers') || '[]');
+    } catch { return []; }
+}
+
+window.toggleFavorite = (itemStr) => {
+    // Only used toggling from drawer, so we need item
+    // But we have window.currentItem
+    const item = window.currentItem;
+    if (!item) return;
+
+    let favorites = getFavorites();
+    const index = favorites.findIndex(f => f['CUSTOMER NAME'] === item['CUSTOMER NAME']);
+
+    const btn = document.getElementById('favBtn');
+
+    if (index === -1) {
+        // Add
+        favorites.push(item);
+        if (btn) {
+            btn.classList.add('active');
+            btn.innerHTML = '<i class="fa-solid fa-star"></i>';
+        }
+        showToast('Added to Favorites');
+    } else {
+        // Remove
+        favorites.splice(index, 1);
+        if (btn) {
+            btn.classList.remove('active');
+            btn.innerHTML = '<i class="fa-regular fa-star"></i>';
+        }
+        showToast('Removed from Favorites');
+    }
+    localStorage.setItem('favoriteCustomers', JSON.stringify(favorites));
+};
+
+function isFavorite(item) {
+    const favorites = getFavorites();
+    return favorites.some(f => f['CUSTOMER NAME'] === item['CUSTOMER NAME']);
+}
+
+function showHistoryAndFavorites() {
+    const history = getHistory();
+    const favorites = getFavorites();
+
+    if (history.length === 0 && favorites.length === 0) {
+        hideResults();
+        return;
+    }
+
+    let html = '';
+
+    // Favorites Section
+    if (favorites.length > 0) {
+        html += `
+            <div class="dropdown-header">
+                <span><i class="fa-solid fa-star" style="color:#eab308; margin-right:5px;"></i>Favorites</span>
+            </div>
+        ` + favorites.map((item, index) => `
+            <div class="result-item animate-in" style="animation-delay: ${index * 0.03}s" onclick="viewDetails('${item.LOCATION || ''}','${escapeHtml(JSON.stringify(item))}')">
+                <div class="result-info">
+                    <h4>${item['CUSTOMER NAME']}</h4>
+                    <p>${item.PLACE}</p>
+                </div>
+                <i class="fa-solid fa-chevron-right result-arrow"></i>
+            </div>
+        `).join('');
+    }
+
+    // Divider if both exist
+    if (favorites.length > 0 && history.length > 0) {
+        html += `<div class="section-divider"></div>`;
+    }
+
+    // History Section
+    if (history.length > 0) {
+        html += `
+            <div class="dropdown-header">
+                <span>Recent Searches</span>
+                <span class="clear-history" onclick="event.stopPropagation(); clearHistory()">Clear</span>
+            </div>
+        ` + history.map((item, index) => `
+            <div class="result-item animate-in" style="animation-delay: ${index * 0.03}s" onclick="viewDetails('${item.LOCATION || ''}','${escapeHtml(JSON.stringify(item))}')">
+                <div class="result-info">
+                    <h4><i class="fa-solid fa-clock-rotate-left" style="margin-right:8px; font-size:0.8em; opacity:0.6;"></i>${item['CUSTOMER NAME']}</h4>
+                    <p>${item.PLACE}</p>
+                </div>
+                <i class="fa-solid fa-chevron-right result-arrow"></i>
+            </div>
+        `).join('');
+    }
+
+    els.results.innerHTML = html;
+    els.results.classList.remove('hidden');
+}
+
 // --- History Management ---
 function getHistory() {
     try {
         return JSON.parse(localStorage.getItem('searchHistory') || '[]');
     } catch { return []; }
 }
-
+// ... rest matches existing code up to addToHistory
 function addToHistory(item) {
     let history = getHistory();
     // Unique by name+phone to avoid duplicates
@@ -138,32 +286,12 @@ function addToHistory(item) {
 
 function clearHistory() {
     localStorage.removeItem('searchHistory');
-    hideResults();
+    showHistoryAndFavorites(); // Refresh view instead of hiding (if favs exist)
 }
 
 function showHistory() {
-    const history = getHistory();
-    if (history.length === 0) {
-        hideResults();
-        return;
-    }
-
-    els.results.innerHTML = `
-        <div class="dropdown-header">
-            <span>Recent Searches</span>
-            <span class="clear-history" onclick="event.stopPropagation(); clearHistory()">Clear</span>
-        </div>
-    ` + history.map((item, index) => `
-        <div class="result-item animate-in" style="animation-delay: ${index * 0.03}s" onclick="viewDetails('${item.LOCATION || ''}','${escapeHtml(JSON.stringify(item))}')">
-            <div class="result-info">
-                <h4><i class="fa-solid fa-clock-rotate-left" style="margin-right:8px; font-size:0.8em; opacity:0.6;"></i>${item['CUSTOMER NAME']}</h4>
-                <p>${item.PLACE}</p>
-            </div>
-            <i class="fa-solid fa-chevron-right result-arrow"></i>
-        </div>
-    `).join('');
-
-    els.results.classList.remove('hidden');
+    // Deprecated for showHistoryAndFavorites
+    showHistoryAndFavorites();
 }
 
 // --- Highlighting Logic ---
@@ -250,9 +378,10 @@ function showToast(message) {
     }, 2000);
 }
 
-// Global scope for onclick
+// Update viewDetails to include Favorite Button
 window.viewDetails = (location, itemStr) => {
     const item = JSON.parse(decodeHtml(itemStr));
+    window.currentItem = item; // Store for actions
 
     let delay = 0;
     const getDelay = () => {
@@ -260,7 +389,15 @@ window.viewDetails = (location, itemStr) => {
         return `${delay}s`;
     };
 
+    const isFav = isFavorite(item);
+    const favIconClass = isFav ? 'fa-solid fa-star' : 'fa-regular fa-star';
+    const favBtnClass = isFav ? 'active' : '';
+
     els.drawerContent.innerHTML = `
+        <div style="position:absolute; top:20px; left:20px; z-index:10;">
+             <button id="favBtn" class="icon-btn favorite-btn ${favBtnClass}" onclick="toggleFavorite()"><i class="${favIconClass}"></i></button>
+        </div>
+
         <div class="drawer-profile-header animate-in" style="text-align:center; margin-bottom:24px; animation-delay: ${getDelay()};">
             <h2 style="margin-bottom:8px; font-size:1.5rem;">${item['CUSTOMER NAME']}</h2>
             <p style="color:var(--text-secondary); font-size:1.1rem;"><i class="fa-solid fa-location-dot" style="margin-right:5px; font-size:0.9em;"></i>${item.PLACE}</p>
@@ -336,31 +473,6 @@ window.shareContact = async () => {
         copyToClipboard(`${shareData.title}\n${shareData.text}`);
         showToast('Details copied to clipboard');
     }
-};
-
-window.downloadVCard = () => {
-    const item = window.currentItem;
-    if (!item) return;
-
-    const vCardData = [
-        'BEGIN:VCARD',
-        'VERSION:3.0',
-        `FN:${item['CUSTOMER NAME']}`,
-        `TEL;TYPE=CELL:${item['MOBILE NUMBER']}`,
-        `ADR;TYPE=WORK:;;${item.PLACE};;;;`,
-        `NOTE:Route: ${item.ROUTE} | Executive: ${item['SALES EXECUTIVE']}`,
-        'END:VCARD'
-    ].join('\n');
-
-    const blob = new Blob([vCardData], { type: 'text/vcard' });
-    const url = window.URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `${item['CUSTOMER NAME']}.vcf`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    showToast('Contact saved');
 };
 
 function getExecutiveLink(name) {

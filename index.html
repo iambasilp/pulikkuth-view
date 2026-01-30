@@ -18,6 +18,7 @@
     <meta name="theme-color" content="#1e293b">
 
     <link rel="manifest" href="manifest.json">
+    <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
@@ -37,9 +38,14 @@
     <div class="search-container">
         <img src="logo.png" alt="Ogito Logo" class="app-logo">
         <h2 class="search-subtitle">Customer Search</h2>
+        <p id="dataStatus"
+            style="font-size:0.8rem; color:var(--text-secondary); margin-bottom:20px; opacity:0; transition:opacity 0.5s;">
+            Loading database...</p>
+
         <div class="search-box-wrapper">
             <i class="fa-solid fa-magnifying-glass search-icon"></i>
             <input type="text" id="searchInput" placeholder="Search by Name, Place, or Phone..." autocomplete="off">
+            <button id="voiceBtn" class="voice-btn" title="Voice Search"><i class="fa-solid fa-microphone"></i></button>
         </div>
         <div class="search-results-dropdown hidden" id="searchResults">
             <!-- Results injected here -->
@@ -60,9 +66,6 @@
                 <a href="#" class="btn btn-outline" id="drawerCall"><i class="fa-solid fa-phone"></i> Call</a>
                 <a href="#" class="btn btn-primary" id="drawerLoc" target="_blank"><i
                         class="fa-solid fa-map-location-dot"></i> Map</a>
-                <button class="btn btn-outline" onclick="downloadVCard()"
-                    style="width:100%; border-color:var(--text-secondary); color:var(--text-secondary);"><i
-                        class="fa-solid fa-user-plus"></i> Save to Contacts</button>
             </div>
         </div>
     </div>

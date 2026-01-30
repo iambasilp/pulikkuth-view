@@ -92,6 +92,49 @@ body {
     box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.25), 0 10px 20px -5px rgba(0, 0, 0, 0.2);
 }
 
+.voice-btn {
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: transparent;
+    border: none;
+    color: var(--text-secondary);
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    padding: 8px;
+    border-radius: 50%;
+}
+
+.voice-btn:hover {
+    color: var(--accent);
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.voice-btn.listening {
+    color: #ef4444;
+    /* Red for recording */
+    animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+    0% {
+        transform: translateY(-50%) scale(1);
+        box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4);
+    }
+
+    70% {
+        transform: translateY(-50%) scale(1.1);
+        box-shadow: 0 0 0 10px rgba(239, 68, 68, 0);
+    }
+
+    100% {
+        transform: translateY(-50%) scale(1);
+        box-shadow: 0 0 0 0 rgba(239, 68, 68, 0);
+    }
+}
+
 /* --- Dropdown Results --- */
 .search-results-dropdown {
     position: absolute;
@@ -353,76 +396,146 @@ body {
 
 /* Responsive */
 @media (max-width: 600px) {
+    .search-container {
+        padding: 15px;
+        margin-bottom: 20px;
+        max-width: 100%;
+    }
+
+    .app-logo {
+        max-width: 90px;
+    }
+
+    .search-subtitle {
+        font-size: 1rem;
+        margin-bottom: 1.5rem;
+    }
+
+    #searchInput {
+        font-size: 16px;
+        /* Prevent IOS zoom */
+        padding: 16px 20px 16px 45px;
+        border-radius: 16px;
+        /* Modern mobile look */
+    }
+
+    .search-results-dropdown {
+        position: fixed;
+        /* Fix to viewport on mobile for stability */
+        top: auto;
+        bottom: 20px;
+        /* Or relative to input if we want */
+        /* Actually, let's keep it relative but ensure max-height is safe */
+        position: absolute;
+        max-height: 50vh;
+        width: calc(100% - 30px);
+        /* Account for container padding */
+        left: 15px;
+        right: 15px;
+    }
+
+    /* Drawer - Bottom Sheet Transformation */
     .drawer {
         width: 100%;
-        height: 85vh;
-        /* Leave some space at top for context */
+        height: auto;
+        max-height: 90vh;
+        /* Don't cover entire screen */
         top: auto;
         bottom: 0;
         right: 0;
         left: 0;
         border-radius: 24px 24px 0 0;
-        /* Modern card look */
-        transform: translateY(100%);
-        /* Slide up instead of left */
+        transform: translateY(105%);
+        /* Ensure fully hidden */
         border-left: none;
-        border-top: 1px solid rgba(255, 255, 255, 0.1);
-        box-shadow: 0 -4px 30px rgba(0, 0, 0, 0.5);
+        border-top: 1px solid rgba(255, 255, 255, 0.15);
+        box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.6);
+        background-color: #1e293b;
+        /* Ensure opaque */
+        display: flex;
+        flex-direction: column;
     }
 
     .drawer.active {
         transform: translateY(0);
     }
 
-    /* Visual Handle for Bottom Sheet */
     .drawer-header {
         position: relative;
         justify-content: center;
-        /* Center title */
-        padding-top: 30px;
-        /* Space for handle */
+        padding: 20px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        /* Softer border */
     }
 
-    .drawer-header::before {
+    /* Drag Handle */
+    .drawer-header::after {
         content: '';
         position: absolute;
-        top: 12px;
+        top: 8px;
         left: 50%;
         transform: translateX(-50%);
         width: 40px;
-        height: 5px;
+        height: 4px;
         background-color: rgba(255, 255, 255, 0.2);
         border-radius: 10px;
     }
 
-    /* Move Close button to top right absolute for sheet */
     .drawer-header .icon-btn {
         position: absolute;
         right: 20px;
-        top: 20px;
-        background: rgba(0, 0, 0, 0.2);
-        /* easier to see */
+        top: 15px;
+        /* Adjust for handle */
+        background: rgba(255, 255, 255, 0.05);
+        width: 32px;
+        height: 32px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
     }
 
-    /* Tighter padding for mobile screens */
-    .drawer-content,
-    .drawer-footer {
+    .drawer-body {
+        /* Mobile Scroll Physics */
+        -webkit-overflow-scrolling: touch;
+        padding-bottom: env(safe-area-inset-bottom, 20px);
+        /* iPhone Home Bar Safe Area */
+    }
+
+    .drawer-content {
         padding: 20px;
     }
 
-    .search-container {
-        padding: 15px;
-        margin-bottom: 20px;
+    .drawer-footer {
+        padding: 15px 20px;
+        padding-bottom: calc(15px + env(safe-area-inset-bottom, 10px));
+        background: rgba(30, 41, 59, 0.5);
+        /* Subtle distinction */
+        backdrop-filter: blur(10px);
     }
 
-    .search-subtitle {
-        font-size: 1.1rem;
-        margin-bottom: 1.5rem;
+    /* Typography Upgrades for Mobile */
+    .detail-label {
+        font-size: 0.7rem;
+        opacity: 0.8;
     }
 
-    #searchInput {
+    .detail-value {
+        font-size: 1.05rem;
+        /* Larger for readability */
+        font-weight: 600;
+    }
+
+    /* Improve Detail Row Height */
+    .detail-row {
+        padding: 14px 0;
+    }
+
+    /* Buttons */
+    .btn {
+        padding: 14px 0;
+        /* Larger touch target */
         font-size: 1rem;
-        padding: 15px 20px 15px 50px;
     }
 }
 
@@ -478,4 +591,23 @@ body {
     font-family: 'Font Awesome 6 Free';
     font-weight: 900;
     color: var(--accent);
+}
+
+/* Favorites */
+.favorite-btn {
+    font-size: 1.5rem;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.favorite-btn.active {
+    color: #eab308;
+    /* Yellow/Gold */
+}
+
+.section-divider {
+    height: 1px;
+    background: var(--border);
+    margin: 8px 0;
 }
