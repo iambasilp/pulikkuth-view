@@ -21,38 +21,7 @@ function init() {
     setupVoiceSearch();
     // Optional: Focus input on load
     els.input.focus();
-    generateQuickFilters();
 }
-
-function generateQuickFilters() {
-    // Count occurrences of places
-    const placeCounts = {};
-    data.forEach(item => {
-        if (item.PLACE) {
-            placeCounts[item.PLACE] = (placeCounts[item.PLACE] || 0) + 1;
-        }
-    });
-
-    // Sort by count desc and take top 5
-    const topPlaces = Object.entries(placeCounts)
-        .sort((a, b) => b[1] - a[1])
-        .slice(0, 5)
-        .map(entry => entry[0]);
-
-    const container = document.getElementById('quickFilters');
-    if (container && topPlaces.length > 0) {
-        container.innerHTML = topPlaces.map(place => `
-            <div class="filter-chip" onclick="applyQuickFilter('${escapeHtml(place)}')">
-                <i class="fa-solid fa-map-pin" style="margin-right:5px; font-size:0.8em;"></i>${place}
-            </div>
-        `).join('');
-    }
-}
-
-window.applyQuickFilter = (text) => {
-    els.input.value = text;
-    els.input.dispatchEvent(new Event('input'));
-};
 
 function updateDataStatus() {
     // ... existing updateDataStatus ...
@@ -71,17 +40,6 @@ function updateDataStatus() {
             delay += 0.04;
             return `${delay}s`;
         };
-
-        const isFav = isFavorite(item);
-        const favIconClass = isFav ? 'fa-solid fa-star' : 'fa-regular fa-star';
-        const favBtn = document.getElementById('favBtn');
-
-        // Update existing button state
-        if (favBtn) {
-            favBtn.innerHTML = `<i class="${favIconClass}"></i>`;
-            if (isFav) favBtn.classList.add('active');
-            else favBtn.classList.remove('active');
-        }
 
         // Nearby Logic
         const nearby = data.filter(d => d.PLACE === item.PLACE && d['CUSTOMER NAME'] !== item['CUSTOMER NAME']).slice(0, 5);
@@ -221,7 +179,7 @@ function setupListeners() {
         const query = e.target.value.trim().toLowerCase();
 
         if (query.length === 0) {
-            showHistoryAndFavorites(); // Show both
+            showHistory(); // Back to history if cleared
             return;
         }
 
@@ -240,7 +198,7 @@ function setupListeners() {
         if (els.input.value.trim().length > 0) {
             els.results.classList.remove('hidden');
         } else {
-            showHistoryAndFavorites();
+            showHistory();
         }
     });
 
@@ -303,111 +261,13 @@ function debounce(func, wait) {
     };
 }
 
-// --- Favorites Management ---
-function getFavorites() {
-    try {
-        return JSON.parse(localStorage.getItem('favoriteCustomers') || '[]');
-    } catch { return []; }
-}
-
-window.toggleFavorite = (itemStr) => {
-    // Only used toggling from drawer, so we need item
-    // But we have window.currentItem
-    const item = window.currentItem;
-    if (!item) return;
-
-    let favorites = getFavorites();
-    const index = favorites.findIndex(f => f['CUSTOMER NAME'] === item['CUSTOMER NAME']);
-
-    const btn = document.getElementById('favBtn');
-
-    if (index === -1) {
-        // Add
-        favorites.push(item);
-        if (btn) {
-            btn.classList.add('active');
-            btn.innerHTML = '<i class="fa-solid fa-star"></i>';
-        }
-        showToast('Added to Favorites');
-    } else {
-        // Remove
-        favorites.splice(index, 1);
-        if (btn) {
-            btn.classList.remove('active');
-            btn.innerHTML = '<i class="fa-regular fa-star"></i>';
-        }
-        showToast('Removed from Favorites');
-    }
-    localStorage.setItem('favoriteCustomers', JSON.stringify(favorites));
-};
-
-function isFavorite(item) {
-    const favorites = getFavorites();
-    return favorites.some(f => f['CUSTOMER NAME'] === item['CUSTOMER NAME']);
-}
-
-function showHistoryAndFavorites() {
-    const history = getHistory();
-    const favorites = getFavorites();
-
-    if (history.length === 0 && favorites.length === 0) {
-        hideResults();
-        return;
-    }
-
-    let html = '';
-
-    // Favorites Section
-    if (favorites.length > 0) {
-        html += `
-            <div class="dropdown-header">
-                <span><i class="fa-solid fa-star" style="color:#eab308; margin-right:5px;"></i>Favorites</span>
-            </div>
-        ` + favorites.map((item, index) => `
-            <div class="result-item animate-in" style="animation-delay: ${index * 0.03}s" onclick="viewDetails('${item.LOCATION || ''}','${escapeHtml(JSON.stringify(item))}')">
-                <div class="result-info">
-                    <h4>${item['CUSTOMER NAME']}</h4>
-                    <p>${item.PLACE}</p>
-                </div>
-                <i class="fa-solid fa-chevron-right result-arrow"></i>
-            </div>
-        `).join('');
-    }
-
-    // Divider if both exist
-    if (favorites.length > 0 && history.length > 0) {
-        html += `<div class="section-divider"></div>`;
-    }
-
-    // History Section
-    if (history.length > 0) {
-        html += `
-            <div class="dropdown-header">
-                <span>Recent Searches</span>
-                <span class="clear-history" onclick="event.stopPropagation(); clearHistory()">Clear</span>
-            </div>
-        ` + history.map((item, index) => `
-            <div class="result-item animate-in" style="animation-delay: ${index * 0.03}s" onclick="viewDetails('${item.LOCATION || ''}','${escapeHtml(JSON.stringify(item))}')">
-                <div class="result-info">
-                    <h4><i class="fa-solid fa-clock-rotate-left" style="margin-right:8px; font-size:0.8em; opacity:0.6;"></i>${item['CUSTOMER NAME']}</h4>
-                    <p>${item.PLACE}</p>
-                </div>
-                <i class="fa-solid fa-chevron-right result-arrow"></i>
-            </div>
-        `).join('');
-    }
-
-    els.results.innerHTML = html;
-    els.results.classList.remove('hidden');
-}
-
 // --- History Management ---
 function getHistory() {
     try {
         return JSON.parse(localStorage.getItem('searchHistory') || '[]');
     } catch { return []; }
 }
-// ... rest matches existing code up to addToHistory
+
 function addToHistory(item) {
     let history = getHistory();
     // Unique by name+phone to avoid duplicates
@@ -419,12 +279,32 @@ function addToHistory(item) {
 
 function clearHistory() {
     localStorage.removeItem('searchHistory');
-    showHistoryAndFavorites(); // Refresh view instead of hiding (if favs exist)
+    hideResults();
 }
 
 function showHistory() {
-    // Deprecated for showHistoryAndFavorites
-    showHistoryAndFavorites();
+    const history = getHistory();
+    if (history.length === 0) {
+        hideResults();
+        return;
+    }
+
+    els.results.innerHTML = `
+        <div class="dropdown-header">
+            <span>Recent Searches</span>
+            <span class="clear-history" onclick="event.stopPropagation(); clearHistory()">Clear</span>
+        </div>
+    ` + history.map((item, index) => `
+        <div class="result-item animate-in" style="animation-delay: ${index * 0.03}s" onclick="viewDetails('${item.LOCATION || ''}','${escapeHtml(JSON.stringify(item))}')">
+            <div class="result-info">
+                <h4><i class="fa-solid fa-clock-rotate-left" style="margin-right:8px; font-size:0.8em; opacity:0.6;"></i>${item['CUSTOMER NAME']}</h4>
+                <p>${item.PLACE}</p>
+            </div>
+            <i class="fa-solid fa-chevron-right result-arrow"></i>
+        </div>
+    `).join('');
+
+    els.results.classList.remove('hidden');
 }
 
 // --- Highlighting Logic ---
