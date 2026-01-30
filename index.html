@@ -17,6 +17,10 @@
     <!-- Theme Color -->
     <meta name="theme-color" content="#1e293b">
 
+    <link rel="manifest" href="manifest.json">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
     <!-- Fonts: Inter -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -52,10 +56,13 @@
             <div class="drawer-content" id="drawerContent">
                 <!-- Dynamic Content -->
             </div>
-            <div class="drawer-footer">
+            <div class="drawer-footer" style="flex-wrap:wrap;">
                 <a href="#" class="btn btn-outline" id="drawerCall"><i class="fa-solid fa-phone"></i> Call</a>
                 <a href="#" class="btn btn-primary" id="drawerLoc" target="_blank"><i
-                        class="fa-solid fa-map-location-dot"></i> Directions</a>
+                        class="fa-solid fa-map-location-dot"></i> Map</a>
+                <button class="btn btn-outline" onclick="downloadVCard()"
+                    style="width:100%; border-color:var(--text-secondary); color:var(--text-secondary);"><i
+                        class="fa-solid fa-user-plus"></i> Save to Contacts</button>
             </div>
         </div>
     </div>

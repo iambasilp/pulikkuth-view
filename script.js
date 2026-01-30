@@ -295,6 +295,57 @@ window.viewDetails = (location, itemStr) => {
 
     els.drawer.classList.add('active');
     hideResults();
+
+    // Store current item for actions
+    window.currentItem = item;
+};
+
+// --- External Integrations ---
+window.shareContact = async () => {
+    const item = window.currentItem;
+    if (!item) return;
+
+    const shareData = {
+        title: item['CUSTOMER NAME'],
+        text: `Customer: ${item['CUSTOMER NAME']}\nPhone: ${item['MOBILE NUMBER']}\nPlace: ${item['PLACE']}\nRoute: ${item['ROUTE']}`,
+        url: window.location.href
+    };
+
+    if (navigator.share) {
+        try {
+            await navigator.share(shareData);
+        } catch (err) {
+            console.log('Share canceled');
+        }
+    } else {
+        copyToClipboard(`${shareData.title}\n${shareData.text}`);
+        showToast('Details copied to clipboard');
+    }
+};
+
+window.downloadVCard = () => {
+    const item = window.currentItem;
+    if (!item) return;
+
+    const vCardData = [
+        'BEGIN:VCARD',
+        'VERSION:3.0',
+        `FN:${item['CUSTOMER NAME']}`,
+        `TEL;TYPE=CELL:${item['MOBILE NUMBER']}`,
+        `ADR;TYPE=WORK:;;${item.PLACE};;;;`,
+        `NOTE:Route: ${item.ROUTE} | Executive: ${item['SALES EXECUTIVE']}`,
+        'END:VCARD'
+    ].join('\n');
+
+    const blob = new Blob([vCardData], { type: 'text/vcard' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `${item['CUSTOMER NAME']}.vcf`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    showToast('Contact saved');
 };
 
 function getExecutiveLink(name) {
