@@ -475,9 +475,11 @@ window.shareContact = async () => {
     const item = window.currentItem;
     if (!item) return;
 
+    const mapLink = item.LOCATION || `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(item.PLACE + ' ' + item.ROUTE)}`;
+
     const shareData = {
         title: item['CUSTOMER NAME'],
-        text: `👤 ${item['CUSTOMER NAME']}\n📞 ${item['MOBILE NUMBER']}\n📍 ${item['PLACE']}\n🛣️ ${item['ROUTE']}`,
+        text: `👤 ${item['CUSTOMER NAME']}\n📞 ${item['MOBILE NUMBER']}\n📍 ${item['PLACE']}\n🛣️ ${item['ROUTE']}\n🗺️ ${mapLink}`,
         url: window.location.href
     };
 
