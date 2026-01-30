@@ -41,30 +41,11 @@ function updateDataStatus() {
             return `${delay}s`;
         };
 
-        // Nearby Logic
-        const nearby = data.filter(d => d.PLACE === item.PLACE && d['CUSTOMER NAME'] !== item['CUSTOMER NAME']).slice(0, 5);
-        let nearbyHtml = '';
-        if (nearby.length > 0) {
-            nearbyHtml = `
-            <div class="nearby-section animate-in" style="animation-delay: ${getDelay()};">
-                <div class="nearby-title">Also in ${item.PLACE}</div>
-                <div class="nearby-scroll">
-                    ${nearby.map(n => `
-                        <div class="nearby-card" onclick="viewDetails('${n.LOCATION || ''}','${escapeHtml(JSON.stringify(n))}')">
-                            <h5>${n['CUSTOMER NAME']}</h5>
-                            <p>${n.ROUTE}</p>
-                        </div>
-                    `).join('')}
-                </div>
-            </div>
-        `;
-        }
-
         els.drawerContent.innerHTML = `
         <div class="drawer-profile-header animate-in" style="text-align:center; margin-bottom:24px; animation-delay: ${getDelay()};">
             <h2 style="margin-bottom:8px; font-size:1.5rem;">${item['CUSTOMER NAME']}</h2>
             <p style="color:var(--text-secondary); font-size:1.1rem;"><i class="fa-solid fa-location-dot" style="margin-right:5px; font-size:0.9em;"></i>${item.PLACE}</p>
-        </div>
+        </div >
 
         <div class="detail-row animate-in" style="animation-delay: ${getDelay()};">
             <div class="detail-label">CONTACT</div>
@@ -105,9 +86,9 @@ function updateDataStatus() {
         </div>
         
         ${nearbyHtml}
-    `;
+        `;
 
-        els.drawerCall.href = `tel:${item['MOBILE NUMBER']}`;
+        els.drawerCall.href = `tel:${item['MOBILE NUMBER']} `;
         els.drawerLoc.href = item.LOCATION || `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(item.PLACE + ' ' + item.ROUTE)}`;
 
         els.drawer.classList.add('active');
@@ -476,7 +457,7 @@ window.viewDetails = (location, itemStr) => {
             </div>
         </div>
         
-        ${nearbyHtml}
+
     `;
 
     els.drawerCall.href = `tel:${item['MOBILE NUMBER']}`;
