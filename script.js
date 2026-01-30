@@ -85,7 +85,7 @@ function updateDataStatus() {
             </div>
         </div>
         
-        ${nearbyHtml}
+
         `;
 
         els.drawerCall.href = `tel:${item['MOBILE NUMBER']} `;
