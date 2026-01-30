@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Meta Tags -->
+    <title>Customer Search</title>
+    <meta name="description" content="Quick customer search and profile viewer.">
+
+    <!-- Open Graph / Social -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Customer Search">
+    <meta property="og:description" content="Find customer contacts instantly.">
+
+    <!-- Theme Color -->
+    <meta name="theme-color" content="#1e293b">
+
+    <!-- Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Icons: FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+</head>
+
+<body>
+    <div class="search-container">
+        <h1>Consumer Search</h1>
+        <div class="search-box-wrapper">
+            <i class="fa-solid fa-magnifying-glass search-icon"></i>
+            <input type="text" id="searchInput" placeholder="Search by Name, Place, or Phone..." autocomplete="off">
+        </div>
+        <div class="search-results-dropdown hidden" id="searchResults">
+            <!-- Results injected here -->
+        </div>
+    </div>
+
+    <!-- Details Drawer (Hidden by default) -->
+    <div class="drawer hidden" id="detailsDrawer">
+        <div class="drawer-header">
+            <h2>Customer Details</h2>
+            <button class="icon-btn" id="closeDrawer"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div class="drawer-content" id="drawerContent">
+            <!-- Dynamic Content -->
+        </div>
+        <div class="drawer-footer">
+            <a href="#" class="btn btn-outline" id="drawerCall"><i class="fa-solid fa-phone"></i> Call</a>
+            <a href="#" class="btn btn-primary" id="drawerLoc" target="_blank"><i
+                    class="fa-solid fa-map-location-dot"></i> Directions</a>
+        </div>
+    </div>
+
+    <script src="data.js"></script>
+    <script src="script.js"></script>
+</body>
+
+</html>
