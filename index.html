@@ -47,6 +47,10 @@
             <input type="text" id="searchInput" placeholder="Search by Name, Place, or Phone..." autocomplete="off">
             <button id="voiceBtn" class="voice-btn" title="Voice Search"><i class="fa-solid fa-microphone"></i></button>
         </div>
+
+        <!-- Smart Quick Filters -->
+        <div id="quickFilters" class="quick-filters animate-in"></div>
+
         <div class="search-results-dropdown hidden" id="searchResults">
             <!-- Results injected here -->
         </div>
@@ -54,9 +58,13 @@
 
     <!-- Details Drawer (Hidden by default) -->
     <div class="drawer hidden" id="detailsDrawer">
-        <div class="drawer-header">
-
-            <button class="icon-btn" id="closeDrawer"><i class="fa-solid fa-xmark"></i></button>
+        <div class="drawer-header" style="justify-content: flex-end; gap: 10px;">
+            <!-- Actions -->
+            <button class="icon-btn favorite-btn" id="favBtn" onclick="toggleFavorite()"><i
+                    class="fa-regular fa-star"></i></button>
+            <button class="icon-btn" onclick="shareContact()"><i class="fa-solid fa-share-nodes"></i></button>
+            <button class="icon-btn" id="closeDrawer" style="margin-left:5px;"><i
+                    class="fa-solid fa-xmark"></i></button>
         </div>
         <div class="drawer-body">
             <div class="drawer-content" id="drawerContent">

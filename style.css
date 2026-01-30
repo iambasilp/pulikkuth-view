@@ -420,18 +420,19 @@ body {
     }
 
     .search-results-dropdown {
-        position: fixed;
-        /* Fix to viewport on mobile for stability */
-        top: auto;
-        bottom: 20px;
-        /* Or relative to input if we want */
-        /* Actually, let's keep it relative but ensure max-height is safe */
         position: absolute;
+        /* Revert to absolute relative to container */
+        top: 100%;
+        /* Below input */
+        bottom: auto;
+        /* Reset */
+        left: 20px;
+        right: 20px;
+        width: auto;
         max-height: 50vh;
-        width: calc(100% - 30px);
-        /* Account for container padding */
-        left: 15px;
-        right: 15px;
+        border-radius: 0 0 16px 16px;
+        border-top: none;
+        box-shadow: 0 15px 30px rgba(0, 0, 0, 0.5);
     }
 
     /* Drawer - Bottom Sheet Transformation */
@@ -482,13 +483,11 @@ body {
     }
 
     .drawer-header .icon-btn {
-        position: absolute;
-        right: 20px;
-        top: 15px;
-        /* Adjust for handle */
+        position: static;
+        /* Let flexbox handle it */
+        width: 40px;
+        height: 40px;
         background: rgba(255, 255, 255, 0.05);
-        width: 32px;
-        height: 32px;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -610,4 +609,84 @@ body {
     height: 1px;
     background: var(--border);
     margin: 8px 0;
+}
+
+/* Quick Filters */
+.quick-filters {
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;
+    overflow-x: auto;
+    padding-bottom: 5px;
+    justify-content: center;
+    -webkit-overflow-scrolling: touch;
+}
+
+.filter-chip {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--border);
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    white-space: nowrap;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.filter-chip:hover {
+    background: var(--accent);
+    color: white;
+    border-color: var(--accent);
+}
+
+/* Nearby Section */
+.nearby-section {
+    margin-top: 24px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border);
+}
+
+.nearby-title {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 12px;
+}
+
+.nearby-scroll {
+    display: flex;
+    gap: 12px;
+    overflow-x: auto;
+    padding-bottom: 10px;
+}
+
+.nearby-card {
+    min-width: 140px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.nearby-card:hover {
+    background: rgba(255, 255, 255, 0.08);
+    transform: translateY(-2px);
+}
+
+.nearby-card h5 {
+    font-size: 0.9rem;
+    color: var(--text-primary);
+    margin-bottom: 4px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.nearby-card p {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
 }

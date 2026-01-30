@@ -21,9 +21,142 @@ function init() {
     setupVoiceSearch();
     // Optional: Focus input on load
     els.input.focus();
+    generateQuickFilters();
 }
 
+function generateQuickFilters() {
+    // Count occurrences of places
+    const placeCounts = {};
+    data.forEach(item => {
+        if (item.PLACE) {
+            placeCounts[item.PLACE] = (placeCounts[item.PLACE] || 0) + 1;
+        }
+    });
+
+    // Sort by count desc and take top 5
+    const topPlaces = Object.entries(placeCounts)
+        .sort((a, b) => b[1] - a[1])
+        .slice(0, 5)
+        .map(entry => entry[0]);
+
+    const container = document.getElementById('quickFilters');
+    if (container && topPlaces.length > 0) {
+        container.innerHTML = topPlaces.map(place => `
+            <div class="filter-chip" onclick="applyQuickFilter('${escapeHtml(place)}')">
+                <i class="fa-solid fa-map-pin" style="margin-right:5px; font-size:0.8em;"></i>${place}
+            </div>
+        `).join('');
+    }
+}
+
+window.applyQuickFilter = (text) => {
+    els.input.value = text;
+    els.input.dispatchEvent(new Event('input'));
+};
+
 function updateDataStatus() {
+    // ... existing updateDataStatus ...
+
+    // ... existing setupVoiceSearch ...
+
+    // ... existing setGreeting ...
+
+    // ... existing viewDetails logic ...
+    window.viewDetails = (location, itemStr) => {
+        const item = JSON.parse(decodeHtml(itemStr));
+        window.currentItem = item; // Store for actions
+
+        let delay = 0;
+        const getDelay = () => {
+            delay += 0.04;
+            return `${delay}s`;
+        };
+
+        const isFav = isFavorite(item);
+        const favIconClass = isFav ? 'fa-solid fa-star' : 'fa-regular fa-star';
+        const favBtn = document.getElementById('favBtn');
+
+        // Update existing button state
+        if (favBtn) {
+            favBtn.innerHTML = `<i class="${favIconClass}"></i>`;
+            if (isFav) favBtn.classList.add('active');
+            else favBtn.classList.remove('active');
+        }
+
+        // Nearby Logic
+        const nearby = data.filter(d => d.PLACE === item.PLACE && d['CUSTOMER NAME'] !== item['CUSTOMER NAME']).slice(0, 5);
+        let nearbyHtml = '';
+        if (nearby.length > 0) {
+            nearbyHtml = `
+            <div class="nearby-section animate-in" style="animation-delay: ${getDelay()};">
+                <div class="nearby-title">Also in ${item.PLACE}</div>
+                <div class="nearby-scroll">
+                    ${nearby.map(n => `
+                        <div class="nearby-card" onclick="viewDetails('${n.LOCATION || ''}','${escapeHtml(JSON.stringify(n))}')">
+                            <h5>${n['CUSTOMER NAME']}</h5>
+                            <p>${n.ROUTE}</p>
+                        </div>
+                    `).join('')}
+                </div>
+            </div>
+        `;
+        }
+
+        els.drawerContent.innerHTML = `
+        <div class="drawer-profile-header animate-in" style="text-align:center; margin-bottom:24px; animation-delay: ${getDelay()};">
+            <h2 style="margin-bottom:8px; font-size:1.5rem;">${item['CUSTOMER NAME']}</h2>
+            <p style="color:var(--text-secondary); font-size:1.1rem;"><i class="fa-solid fa-location-dot" style="margin-right:5px; font-size:0.9em;"></i>${item.PLACE}</p>
+        </div>
+
+        <div class="detail-row animate-in" style="animation-delay: ${getDelay()};">
+            <div class="detail-label">CONTACT</div>
+            <div class="detail-value" onclick="copyToClipboard('${item['MOBILE NUMBER']}')" style="cursor:pointer; display:flex; align-items:center; justify-content:flex-end; gap:8px;">
+                ${item['MOBILE NUMBER']} <i class="fa-regular fa-copy" style="font-size:0.8em; opacity:0.5;"></i>
+            </div>
+        </div>
+
+        <div class="detail-row animate-in" style="animation-delay: ${getDelay()};">
+            <div class="detail-label">CATEGORY</div>
+            <div class="detail-value">${item.CATEGORY}</div>
+        </div>
+
+        <div class="detail-row animate-in" style="animation-delay: ${getDelay()};">
+            <div class="detail-label">ROUTE</div>
+            <div class="detail-value highlight">${item.ROUTE}</div>
+        </div>
+        
+        <div class="detail-row animate-in" style="animation-delay: ${getDelay()};">
+            <div class="detail-label">SALES EXEC</div>
+            <div class="detail-value">${getExecutiveLink(item['SALES EXECUTIVE'])}</div>
+        </div>
+
+        <div class="detail-row animate-in" style="animation-delay: ${getDelay()};">
+             <div class="detail-label">TYPE</div>
+            <div class="detail-value">${item['TYPE OF SALES'] || 'N/A'}</div>
+        </div>
+        
+        <div class="animate-in" style="margin-top:24px; display:grid; grid-template-columns: 1fr 1fr; gap:12px; animation-delay: ${getDelay()};">
+            <div style="text-align:center; padding:12px; background:rgba(34, 197, 94, 0.1); border-radius:12px; border:1px solid rgba(34, 197, 94, 0.2);">
+                <div class="detail-label" style="color:#22c55e; margin-bottom:4px;">RATE (GREEN)</div>
+                <div class="detail-value" style="color:#4ade80;">${item['RATE GREEN']}</div>
+            </div>
+            <div style="text-align:center; padding:12px; background:rgba(245, 158, 11, 0.1); border-radius:12px; border:1px solid rgba(245, 158, 11, 0.2);">
+                 <div class="detail-label" style="color:#f59e0b; margin-bottom:4px;">RATE (ORANGE)</div>
+                <div class="detail-value" style="color:#fbbf24;">${item['RATE ORANGE']}</div>
+            </div>
+        </div>
+        
+        ${nearbyHtml}
+    `;
+
+        els.drawerCall.href = `tel:${item['MOBILE NUMBER']}`;
+        els.drawerLoc.href = item.LOCATION || `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(item.PLACE + ' ' + item.ROUTE)}`;
+
+        els.drawer.classList.add('active');
+        hideResults();
+
+        // Ensure we don't clear history/favs here logic is separate
+    };
     const statusEl = document.getElementById('dataStatus');
     if (statusEl) {
         statusEl.innerText = `Searching database of ${data.length.toLocaleString()} customers`;
@@ -378,7 +511,7 @@ function showToast(message) {
     }, 2000);
 }
 
-// Update viewDetails to include Favorite Button
+// Global scope for onclick
 window.viewDetails = (location, itemStr) => {
     const item = JSON.parse(decodeHtml(itemStr));
     window.currentItem = item; // Store for actions
@@ -391,13 +524,35 @@ window.viewDetails = (location, itemStr) => {
 
     const isFav = isFavorite(item);
     const favIconClass = isFav ? 'fa-solid fa-star' : 'fa-regular fa-star';
-    const favBtnClass = isFav ? 'active' : '';
+    const favBtn = document.getElementById('favBtn');
+
+    // Update existing button state
+    if (favBtn) {
+        favBtn.innerHTML = `<i class="${favIconClass}"></i>`;
+        if (isFav) favBtn.classList.add('active');
+        else favBtn.classList.remove('active');
+    }
+
+    // Nearby Logic
+    const nearby = data.filter(d => d.PLACE === item.PLACE && d['CUSTOMER NAME'] !== item['CUSTOMER NAME']).slice(0, 5);
+    let nearbyHtml = '';
+    if (nearby.length > 0) {
+        nearbyHtml = `
+            <div class="nearby-section animate-in" style="animation-delay: ${getDelay()};">
+                <div class="nearby-title">Also in ${item.PLACE}</div>
+                <div class="nearby-scroll">
+                    ${nearby.map(n => `
+                        <div class="nearby-card" onclick="viewDetails('${n.LOCATION || ''}','${escapeHtml(JSON.stringify(n))}')">
+                            <h5>${n['CUSTOMER NAME']}</h5>
+                            <p>${n.ROUTE}</p>
+                        </div>
+                    `).join('')}
+                </div>
+            </div>
+        `;
+    }
 
     els.drawerContent.innerHTML = `
-        <div style="position:absolute; top:20px; left:20px; z-index:10;">
-             <button id="favBtn" class="icon-btn favorite-btn ${favBtnClass}" onclick="toggleFavorite()"><i class="${favIconClass}"></i></button>
-        </div>
-
         <div class="drawer-profile-header animate-in" style="text-align:center; margin-bottom:24px; animation-delay: ${getDelay()};">
             <h2 style="margin-bottom:8px; font-size:1.5rem;">${item['CUSTOMER NAME']}</h2>
             <p style="color:var(--text-secondary); font-size:1.1rem;"><i class="fa-solid fa-location-dot" style="margin-right:5px; font-size:0.9em;"></i>${item.PLACE}</p>
@@ -440,6 +595,8 @@ window.viewDetails = (location, itemStr) => {
                 <div class="detail-value" style="color:#fbbf24;">${item['RATE ORANGE']}</div>
             </div>
         </div>
+        
+        ${nearbyHtml}
     `;
 
     els.drawerCall.href = `tel:${item['MOBILE NUMBER']}`;
