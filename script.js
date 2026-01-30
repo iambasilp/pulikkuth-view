@@ -14,9 +14,24 @@ const els = {
 
 // Initialize
 function init() {
+    setGreeting();
     setupListeners();
     // Optional: Focus input on load
     els.input.focus();
+}
+
+function setGreeting() {
+    const hour = new Date().getHours();
+    let greeting = 'Customer Search';
+    const subtitle = document.querySelector('.search-subtitle');
+
+    if (hour < 12) greeting = 'Good Morning';
+    else if (hour < 18) greeting = 'Good Afternoon';
+    else greeting = 'Good Evening';
+
+    if (subtitle) {
+        subtitle.innerHTML = `<span style="opacity:0.6; display:block; font-size:0.8em; font-weight:400; margin-bottom:5px;">${greeting}</span>Customer Search`;
+    }
 }
 
 function setupListeners() {
