@@ -479,7 +479,7 @@ window.shareContact = async () => {
 
     const shareData = {
         title: item['CUSTOMER NAME'],
-        text: `👤 ${item['CUSTOMER NAME']}\n📞 ${item['MOBILE NUMBER']}\n📍 ${item['PLACE']}\n🛣️ ${item['ROUTE']}\n🗺️ ${mapLink}`,
+        text: `👤 ${item['CUSTOMER NAME']}\n📞 ${item['MOBILE NUMBER']}\n📍 ${item['PLACE']}\n🛣️ ${item['ROUTE']}\n🔗 Location Link: ${mapLink}`,
         url: window.location.href
     };
 
