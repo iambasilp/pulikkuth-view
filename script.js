@@ -110,42 +110,41 @@ window.viewDetails = (location, itemStr) => {
     els.drawerContent.innerHTML = `
         <div class="drawer-profile-header" style="text-align:center; margin-bottom:20px;">
             <h2 style="margin-bottom:5px;">${item['CUSTOMER NAME']}</h2>
-            <p style="color:var(--text-secondary);">${item.CATEGORY}</p>
+            <p style="color:var(--text-secondary);">${item.PLACE}</p>
         </div>
 
-        <div class="detail-section">
+        <div class="detail-row">
             <div class="detail-label">CONTACT</div>
-            <div class="detail-value" style="font-size:1.2rem;">${item['MOBILE NUMBER']}</div>
+            <div class="detail-value" style="font-size:1.1rem;">${item['MOBILE NUMBER']}</div>
         </div>
 
-        <div class="detail-section">
-            <div class="detail-label">LOCATION</div>
-            <div class="detail-value">${item.PLACE}</div>
+        <div class="detail-row">
+            <div class="detail-label">CATEGORY</div>
+            <div class="detail-value">${item.CATEGORY}</div>
         </div>
 
-        <div class="detail-section">
+        <div class="detail-row">
             <div class="detail-label">ROUTE</div>
             <div class="detail-value highlight">${item.ROUTE}</div>
         </div>
         
-        <div class="detail-section" style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
-            <div>
-                <div class="detail-label">SALES EXEC</div>
-                <div class="detail-value">${getExecutiveLink(item['SALES EXECUTIVE'])}</div>
-            </div>
-            <div>
-                 <div class="detail-label">TYPE</div>
-                <div class="detail-value">${item['TYPE OF SALES'] || 'N/A'}</div>
-            </div>
+        <div class="detail-row">
+            <div class="detail-label">SALES EXEC</div>
+            <div class="detail-value">${getExecutiveLink(item['SALES EXECUTIVE'])}</div>
+        </div>
+
+        <div class="detail-row">
+             <div class="detail-label">TYPE</div>
+            <div class="detail-value">${item['TYPE OF SALES'] || 'N/A'}</div>
         </div>
         
-        <div class="detail-section" style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
-            <div>
-                <div class="detail-label" style="color:#22c55e;">RATE (GREEN)</div>
+        <div style="margin-top:20px; display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
+            <div style="text-align:center; padding:10px; background:rgba(34, 197, 94, 0.1); border-radius:8px;">
+                <div class="detail-label" style="color:#22c55e; margin-bottom:4px;">RATE (GREEN)</div>
                 <div class="detail-value">${item['RATE GREEN']}</div>
             </div>
-            <div>
-                 <div class="detail-label" style="color:#f59e0b;">RATE (ORANGE)</div>
+            <div style="text-align:center; padding:10px; background:rgba(245, 158, 11, 0.1); border-radius:8px;">
+                 <div class="detail-label" style="color:#f59e0b; margin-bottom:4px;">RATE (ORANGE)</div>
                 <div class="detail-value">${item['RATE ORANGE']}</div>
             </div>
         </div>

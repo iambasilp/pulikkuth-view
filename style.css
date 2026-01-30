@@ -263,6 +263,28 @@ body {
     margin-bottom: 0;
 }
 
+/* Horizontal Row Layout */
+.detail-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--border);
+}
+
+.detail-row:last-child {
+    border-bottom: none;
+}
+
+.detail-row .detail-label {
+    margin-bottom: 0;
+}
+
+.detail-row .detail-value {
+    text-align: right;
+    max-width: 70%;
+}
+
 .detail-label {
     font-size: 0.75rem;
     text-transform: uppercase;
