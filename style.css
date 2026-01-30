@@ -23,8 +23,9 @@ body {
     height: 100vh;
     display: flex;
     justify-content: center;
-    align-items: center;
-    /* Center Vertically */
+    align-items: flex-start;
+    padding-top: 15vh;
+    /* Move content to top third */
     overflow: hidden;
 }
 
@@ -35,8 +36,8 @@ body {
     padding: 20px;
     text-align: center;
     position: relative;
-    /* Move it up a bit visually */
-    margin-bottom: 100px;
+    /* Margin no longer needed for centering offset */
+    margin-bottom: 20px;
 }
 
 .app-logo {
