@@ -85,8 +85,8 @@ function renderResults(results) {
         return;
     }
 
-    els.results.innerHTML = results.map(item => `
-        <div class="result-item" onclick="viewDetails('${item.LOCATION || ''}','${escapeHtml(JSON.stringify(item))}')">
+    els.results.innerHTML = results.map((item, index) => `
+        <div class="result-item animate-in" style="animation-delay: ${index * 0.05}s" onclick="viewDetails('${item.LOCATION || ''}','${escapeHtml(JSON.stringify(item))}')">
             <div class="result-info">
                 <h4>${item['CUSTOMER NAME']}</h4>
                 <p>${item.PLACE}</p>
@@ -107,45 +107,52 @@ window.viewDetails = (location, itemStr) => {
     // Decode the item
     const item = JSON.parse(decodeHtml(itemStr));
 
+    // Staggered delay counter
+    let delay = 0;
+    const getDelay = () => {
+        delay += 0.04; // Faster stagger for brisk feel
+        return `${delay}s`;
+    };
+
     els.drawerContent.innerHTML = `
-        <div class="drawer-profile-header" style="text-align:center; margin-bottom:20px;">
-            <h2 style="margin-bottom:5px;">${item['CUSTOMER NAME']}</h2>
-            <p style="color:var(--text-secondary);">${item.PLACE}</p>
+        <div class="drawer-profile-header animate-in" style="text-align:center; margin-bottom:24px; animation-delay: ${getDelay()};">
+            <h2 style="margin-bottom:8px; font-size:1.5rem;">${item['CUSTOMER NAME']}</h2>
+            <p style="color:var(--text-secondary); font-size:1.1rem;">${item.PLACE}</p>
         </div>
 
-        <div class="detail-row">
+        <div class="detail-row animate-in" style="animation-delay: ${getDelay()};">
             <div class="detail-label">CONTACT</div>
             <div class="detail-value" style="font-size:1.1rem;">${item['MOBILE NUMBER']}</div>
         </div>
 
-        <div class="detail-row">
+        <div class="detail-row animate-in" style="animation-delay: ${getDelay()};">
             <div class="detail-label">CATEGORY</div>
             <div class="detail-value">${item.CATEGORY}</div>
         </div>
 
-        <div class="detail-row">
+        <div class="detail-row animate-in" style="animation-delay: ${getDelay()};">
             <div class="detail-label">ROUTE</div>
             <div class="detail-value highlight">${item.ROUTE}</div>
         </div>
         
-        <div class="detail-row">
+        <div class="detail-row animate-in" style="animation-delay: ${getDelay()};">
             <div class="detail-label">SALES EXEC</div>
             <div class="detail-value">${getExecutiveLink(item['SALES EXECUTIVE'])}</div>
         </div>
 
-        <div class="detail-row">
+        <div class="detail-row animate-in" style="animation-delay: ${getDelay()};">
              <div class="detail-label">TYPE</div>
             <div class="detail-value">${item['TYPE OF SALES'] || 'N/A'}</div>
         </div>
         
-        <div style="margin-top:20px; display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
-            <div style="text-align:center; padding:10px; background:rgba(34, 197, 94, 0.1); border-radius:8px;">
+        <div class="animate-in" style="margin-top:24px; display:grid; grid-template-columns: 1fr 1fr; gap:12px; animation-delay: ${getDelay()};">
+            <div style="text-align:center; padding:12px; background:rgba(34, 197, 94, 0.1); border-radius:12px; border:1px solid rgba(34, 197, 94, 0.2);">
                 <div class="detail-label" style="color:#22c55e; margin-bottom:4px;">RATE (GREEN)</div>
-                <div class="detail-value">${item['RATE GREEN']}</div>
+                <div class="detail-value" style="color:#4ade80;">${item['RATE GREEN']}</div>
             </div>
-            <div style="text-align:center; padding:10px; background:rgba(245, 158, 11, 0.1); border-radius:8px;">
+            <div style="text-align:center; padding:12px; background:rgba(245, 158, 11, 0.1); border-radius:12px; border:1px solid rgba(245, 158, 11, 0.2);">
                  <div class="detail-label" style="color:#f59e0b; margin-bottom:4px;">RATE (ORANGE)</div>
-                <div class="detail-value">${item['RATE ORANGE']}</div>
+                <div class="detail-value" style="color:#fbbf24;">${item['RATE ORANGE']}</div>
             </div>
         </div>
     `;
