@@ -31,7 +31,8 @@
 
 <body>
     <div class="search-container">
-        <h1>Consumer Search</h1>
+        <img src="logo.png" alt="Ogito Logo" class="app-logo">
+        <h2 class="search-subtitle">Customer Search</h2>
         <div class="search-box-wrapper">
             <i class="fa-solid fa-magnifying-glass search-icon"></i>
             <input type="text" id="searchInput" placeholder="Search by Name, Place, or Phone..." autocomplete="off">
@@ -47,13 +48,15 @@
             <h2>Customer Details</h2>
             <button class="icon-btn" id="closeDrawer"><i class="fa-solid fa-xmark"></i></button>
         </div>
-        <div class="drawer-content" id="drawerContent">
-            <!-- Dynamic Content -->
-        </div>
-        <div class="drawer-footer">
-            <a href="#" class="btn btn-outline" id="drawerCall"><i class="fa-solid fa-phone"></i> Call</a>
-            <a href="#" class="btn btn-primary" id="drawerLoc" target="_blank"><i
-                    class="fa-solid fa-map-location-dot"></i> Directions</a>
+        <div class="drawer-body">
+            <div class="drawer-content" id="drawerContent">
+                <!-- Dynamic Content -->
+            </div>
+            <div class="drawer-footer">
+                <a href="#" class="btn btn-outline" id="drawerCall"><i class="fa-solid fa-phone"></i> Call</a>
+                <a href="#" class="btn btn-primary" id="drawerLoc" target="_blank"><i
+                        class="fa-solid fa-map-location-dot"></i> Directions</a>
+            </div>
         </div>
     </div>
 

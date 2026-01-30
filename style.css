@@ -38,12 +38,20 @@ body {
     margin-bottom: 100px;
 }
 
-h1 {
-    font-size: 2.5rem;
-    font-weight: 700;
+.app-logo {
+    max-width: 180px;
+    height: auto;
+    margin-bottom: 0.5rem;
+    /* Reduced margin */
+    display: inline-block;
+}
+
+.search-subtitle {
+    font-size: 1.25rem;
+    color: var(--text-secondary);
+    font-weight: 500;
     margin-bottom: 2rem;
-    color: var(--text-primary);
-    letter-spacing: -0.05em;
+    letter-spacing: 0.05em;
 }
 
 .search-box-wrapper {
@@ -220,22 +228,39 @@ h1 {
     color: var(--text-primary);
 }
 
-.drawer-content {
+/* Drawer Body Wrapper */
+.drawer-body {
     flex: 1;
     overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+}
+
+.drawer-content {
+    /* Remove flex:1 to prevent pushing footer down */
+    flex: 0 0 auto;
     padding: 20px;
 }
 
 .drawer-footer {
     padding: 20px;
-    border-top: 1px solid var(--border);
+    padding-top: 0;
+    /* Tightness requested */
+    border-top: none;
+    /* Flow naturally */
     display: flex;
     gap: 15px;
+    /* Remove margin-top: auto implied logic */
 }
 
 /* Detail Section Styles */
 .detail-section {
     margin-bottom: 24px;
+}
+
+/* Remove bottom margin from the last section to reduce gap before footer */
+.detail-section:last-child {
+    margin-bottom: 0;
 }
 
 .detail-label {
@@ -297,6 +322,13 @@ h1 {
 @media (max-width: 600px) {
     .drawer {
         width: 100%;
+    }
+
+    /* Tighter padding for mobile screens */
+    .drawer-header,
+    .drawer-content,
+    .drawer-footer {
+        padding: 15px;
     }
 
     .search-container {
