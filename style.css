@@ -426,3 +426,45 @@ body {
         transform: translateY(0);
     }
 }
+
+.result-item.selected {
+    background-color: var(--accent);
+    border-color: var(--accent);
+}
+
+.result-item.selected h4,
+.result-item.selected p,
+.result-item.selected .result-arrow {
+    color: white;
+    opacity: 1;
+}
+
+/* Toast Notification */
+.toast {
+    position: fixed;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: var(--card-bg);
+    color: var(--text-primary);
+    padding: 12px 24px;
+    border-radius: 50px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    border: 1px solid var(--accent);
+    z-index: 2000;
+    font-size: 0.9rem;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    pointer-events: none;
+    transition: all 0.3s ease;
+}
+
+.toast::before {
+    content: '\f058';
+    /* Check circle icon */
+    font-family: 'Font Awesome 6 Free';
+    font-weight: 900;
+    color: var(--accent);
+}

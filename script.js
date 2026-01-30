@@ -25,12 +25,11 @@ function setupListeners() {
         const query = e.target.value.trim().toLowerCase();
 
         if (query.length === 0) {
-            hideResults();
+            showHistory(); // Back to history if cleared
             return;
         }
 
-        const matches = filterData(query);
-        renderResults(matches);
+        debouncedFilter(query);
     });
 
     // Close Dropdown when clicking outside
@@ -60,12 +59,115 @@ function setupListeners() {
     });
 }
 
+// Keyboard Navigation
+els.input.addEventListener('keydown', (e) => {
+    const results = els.results.querySelectorAll('.result-item');
+    if (results.length === 0) return;
+
+    if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        selectedIndex = (selectedIndex + 1) % results.length;
+        updateSelection(results);
+    } else if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        selectedIndex = (selectedIndex - 1 + results.length) % results.length;
+        updateSelection(results);
+    } else if (e.key === 'Enter') {
+        e.preventDefault();
+        if (selectedIndex >= 0 && results[selectedIndex]) {
+            results[selectedIndex].click();
+            els.input.blur();
+        }
+    }
+});
+
+
+// State for keyboard nav
+let selectedIndex = -1;
+
+function updateSelection(results) {
+    results.forEach((el, index) => {
+        if (index === selectedIndex) {
+            el.classList.add('selected');
+            el.scrollIntoView({ block: 'nearest' });
+        } else {
+            el.classList.remove('selected');
+        }
+    });
+}
+
+// Debounce Utility
+function debounce(func, wait) {
+    let timeout;
+    return function (...args) {
+        clearTimeout(timeout);
+        timeout = setTimeout(() => func.apply(this, args), wait);
+    };
+}
+
+// --- History Management ---
+function getHistory() {
+    try {
+        return JSON.parse(localStorage.getItem('searchHistory') || '[]');
+    } catch { return []; }
+}
+
+function addToHistory(item) {
+    let history = getHistory();
+    // Unique by name+phone to avoid duplicates
+    history = history.filter(h => h['CUSTOMER NAME'] !== item['CUSTOMER NAME']);
+    history.unshift(item);
+    if (history.length > 5) history.pop(); // Keep last 5
+    localStorage.setItem('searchHistory', JSON.stringify(history));
+}
+
+function clearHistory() {
+    localStorage.removeItem('searchHistory');
+    hideResults();
+}
+
+function showHistory() {
+    const history = getHistory();
+    if (history.length === 0) {
+        hideResults();
+        return;
+    }
+
+    els.results.innerHTML = `
+        <div class="dropdown-header">
+            <span>Recent Searches</span>
+            <span class="clear-history" onclick="event.stopPropagation(); clearHistory()">Clear</span>
+        </div>
+    ` + history.map((item, index) => `
+        <div class="result-item animate-in" style="animation-delay: ${index * 0.03}s" onclick="viewDetails('${item.LOCATION || ''}','${escapeHtml(JSON.stringify(item))}')">
+            <div class="result-info">
+                <h4><i class="fa-solid fa-clock-rotate-left" style="margin-right:8px; font-size:0.8em; opacity:0.6;"></i>${item['CUSTOMER NAME']}</h4>
+                <p>${item.PLACE}</p>
+            </div>
+            <i class="fa-solid fa-chevron-right result-arrow"></i>
+        </div>
+    `).join('');
+
+    els.results.classList.remove('hidden');
+}
+
+// --- Highlighting Logic ---
+function highlightText(text, query) {
+    if (!query || query.length < 1) return text;
+    const regex = new RegExp(`(${query})`, 'gi');
+    return text.replace(regex, '<span class="highlight-match">$1</span>');
+}
+
+const debouncedFilter = debounce((query) => {
+    const matches = filterData(query);
+    renderResults(matches, query);
+}, 250); // 250ms delay for snappiness
+
 function filterData(query) {
-    // Max results to show in dropdown to keep it performant
+    // Max results to show in dropdown
     const MAX_RESULTS = 20;
 
     return data.filter(item => {
-        // Safe check for properties
         const name = (item['CUSTOMER NAME'] || '').toLowerCase();
         const place = (item['PLACE'] || '').toLowerCase();
         const phone = (item['MOBILE NUMBER'] || '');
@@ -78,18 +180,26 @@ function filterData(query) {
     }).slice(0, MAX_RESULTS);
 }
 
-function renderResults(results) {
+function renderResults(results, query = '') {
+    // Reset selection on new search
+    selectedIndex = -1;
+
     if (results.length === 0) {
-        els.results.innerHTML = `<div class="no-results">No customers found.</div>`;
+        els.results.innerHTML = `
+            <div class="no-results animate-in">
+                <i class="fa-solid fa-magnifying-glass" style="font-size:2rem; margin-bottom:10px; opacity:0.3;"></i>
+                <p>No customers found</p>
+            </div>
+        `;
         els.results.classList.remove('hidden');
         return;
     }
 
     els.results.innerHTML = results.map((item, index) => `
-        <div class="result-item animate-in" style="animation-delay: ${index * 0.05}s" onclick="viewDetails('${item.LOCATION || ''}','${escapeHtml(JSON.stringify(item))}')">
+        <div class="result-item animate-in" style="animation-delay: ${index * 0.03}s" onclick="addToHistory(JSON.parse('${escapeHtml(JSON.stringify(item))}')); viewDetails('${item.LOCATION || ''}','${escapeHtml(JSON.stringify(item))}')">
             <div class="result-info">
-                <h4>${item['CUSTOMER NAME']}</h4>
-                <p>${item.PLACE}</p>
+                <h4>${highlightText(item['CUSTOMER NAME'], query)}</h4>
+                <p>${highlightText(item.PLACE, query)}</p>
             </div>
             <i class="fa-solid fa-chevron-right result-arrow"></i>
         </div>
@@ -100,29 +210,52 @@ function renderResults(results) {
 
 function hideResults() {
     els.results.classList.add('hidden');
+    selectedIndex = -1;
+}
+
+// Clipboard Action
+window.copyToClipboard = (text) => {
+    if (!text) return;
+    navigator.clipboard.writeText(text).then(() => {
+        showToast(`Copied: ${text}`);
+    });
+};
+
+function showToast(message) {
+    // Create toast element on fly
+    const toast = document.createElement('div');
+    toast.className = 'toast animate-in';
+    toast.innerText = message;
+    document.body.appendChild(toast);
+
+    setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transform = 'translateY(10px) translateX(-50%)';
+        setTimeout(() => toast.remove(), 300);
+    }, 2000);
 }
 
 // Global scope for onclick
 window.viewDetails = (location, itemStr) => {
-    // Decode the item
     const item = JSON.parse(decodeHtml(itemStr));
 
-    // Staggered delay counter
     let delay = 0;
     const getDelay = () => {
-        delay += 0.04; // Faster stagger for brisk feel
+        delay += 0.04;
         return `${delay}s`;
     };
 
     els.drawerContent.innerHTML = `
         <div class="drawer-profile-header animate-in" style="text-align:center; margin-bottom:24px; animation-delay: ${getDelay()};">
             <h2 style="margin-bottom:8px; font-size:1.5rem;">${item['CUSTOMER NAME']}</h2>
-            <p style="color:var(--text-secondary); font-size:1.1rem;">${item.PLACE}</p>
+            <p style="color:var(--text-secondary); font-size:1.1rem;"><i class="fa-solid fa-location-dot" style="margin-right:5px; font-size:0.9em;"></i>${item.PLACE}</p>
         </div>
 
         <div class="detail-row animate-in" style="animation-delay: ${getDelay()};">
             <div class="detail-label">CONTACT</div>
-            <div class="detail-value" style="font-size:1.1rem;">${item['MOBILE NUMBER']}</div>
+            <div class="detail-value" onclick="copyToClipboard('${item['MOBILE NUMBER']}')" style="cursor:pointer; display:flex; align-items:center; justify-content:flex-end; gap:8px;">
+                ${item['MOBILE NUMBER']} <i class="fa-regular fa-copy" style="font-size:0.8em; opacity:0.5;"></i>
+            </div>
         </div>
 
         <div class="detail-row animate-in" style="animation-delay: ${getDelay()};">
@@ -157,14 +290,10 @@ window.viewDetails = (location, itemStr) => {
         </div>
     `;
 
-    // Actions
     els.drawerCall.href = `tel:${item['MOBILE NUMBER']}`;
     els.drawerLoc.href = item.LOCATION || `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(item.PLACE + ' ' + item.ROUTE)}`;
 
-    // Show Drawer
     els.drawer.classList.add('active');
-
-    // Hide dropdown
     hideResults();
 };
 
