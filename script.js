@@ -21,7 +21,38 @@ function init() {
     setupVoiceSearch();
     // Optional: Focus input on load
     els.input.focus();
+    generateQuickFilters();
 }
+
+function generateQuickFilters() {
+    // Count occurrences of places
+    const placeCounts = {};
+    data.forEach(item => {
+        if (item.PLACE) {
+            placeCounts[item.PLACE] = (placeCounts[item.PLACE] || 0) + 1;
+        }
+    });
+
+    // Sort by count desc and take top 5
+    const topPlaces = Object.entries(placeCounts)
+        .sort((a, b) => b[1] - a[1])
+        .slice(0, 5)
+        .map(entry => entry[0]);
+
+    const container = document.getElementById('quickFilters');
+    if (container && topPlaces.length > 0) {
+        container.innerHTML = topPlaces.map(place => `
+            <div class="filter-chip" onclick="applyQuickFilter('${escapeHtml(place)}')">
+                <i class="fa-solid fa-map-pin" style="margin-right:5px; font-size:0.8em;"></i>${place}
+            </div>
+        `).join('');
+    }
+}
+
+window.applyQuickFilter = (text) => {
+    els.input.value = text;
+    els.input.dispatchEvent(new Event('input'));
+};
 
 function updateDataStatus() {
     // ... existing updateDataStatus ...
