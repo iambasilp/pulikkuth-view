@@ -640,6 +640,35 @@ body {
     border-color: var(--accent);
 }
 
+/* Quick Filters */
+.quick-filters {
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;
+    overflow-x: auto;
+    padding-bottom: 5px;
+    justify-content: center;
+    -webkit-overflow-scrolling: touch;
+}
+
+.filter-chip {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--border);
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    white-space: nowrap;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.filter-chip:hover {
+    background: var(--accent);
+    color: white;
+    border-color: var(--accent);
+}
+
 /* Nearby Section */
 .nearby-section {
     margin-top: 24px;
