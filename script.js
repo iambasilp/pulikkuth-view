@@ -459,7 +459,7 @@ window.viewDetails = (location, itemStr) => {
         <div class="detail-row animate-in" style="animation-delay: ${getDelay()};">
             <div class="detail-label">CONTACT</div>
             <div class="detail-value" onclick="copyToClipboard('${item['MOBILE NUMBER']}')" style="cursor:pointer; display:flex; align-items:center; justify-content:flex-end; gap:8px;">
-                ${item['MOBILE NUMBER']} <i class="fa-regular fa-copy" style="font-size:0.8em; opacity:0.5;"></i>
+                ${maskPhoneNumber(item['MOBILE NUMBER'])} <i class="fa-regular fa-copy" style="font-size:0.8em; opacity:0.5;"></i>
             </div>
         </div>
 
@@ -563,6 +563,13 @@ function escapeHtml(str) {
 
 function decodeHtml(str) {
     return str.replace(/&apos;/g, "'").replace(/&quot;/g, '"');
+}
+
+function maskPhoneNumber(phone) {
+    if (!phone) return '';
+    const str = phone.toString();
+    if (str.length <= 4) return str;
+    return '*'.repeat(str.length - 4) + str.slice(-4);
 }
 
 // Start

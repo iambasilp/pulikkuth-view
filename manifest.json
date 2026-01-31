@@ -1,20 +1,26 @@
 {
     "name": "Customer Search",
     "short_name": "CustSearch",
+    "id": "/",
+    "scope": "/",
     "start_url": "./index.html",
     "display": "standalone",
+    "orientation": "portrait",
     "background_color": "#0f172a",
     "theme_color": "#1e293b",
+    "description": "Quick customer search and profile viewer.",
     "icons": [
         {
             "src": "logo.png",
             "sizes": "192x192",
-            "type": "image/png"
+            "type": "image/png",
+            "purpose": "any maskable"
         },
         {
             "src": "logo.png",
             "sizes": "512x512",
-            "type": "image/png"
+            "type": "image/png",
+            "purpose": "any maskable"
         }
     ]
 }
