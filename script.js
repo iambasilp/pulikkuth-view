@@ -79,12 +79,7 @@ function updateDataStatus() {
             <p style="color:var(--text-secondary); font-size:1.1rem;"><i class="fa-solid fa-location-dot" style="margin-right:5px; font-size:0.9em;"></i>${item.PLACE}</p>
         </div >
 
-        <div class="detail-row animate-in" style="animation-delay: ${getDelay()};">
-            <div class="detail-label">CONTACT</div>
-            <div class="detail-value" onclick="copyToClipboard('${item['MOBILE NUMBER']}')" style="cursor:pointer; display:flex; align-items:center; justify-content:flex-end; gap:8px;">
-                ${item['MOBILE NUMBER']} <i class="fa-regular fa-copy" style="font-size:0.8em; opacity:0.5;"></i>
-            </div>
-        </div>
+     
 
         <div class="detail-row animate-in" style="animation-delay: ${getDelay()};">
             <div class="detail-label">CATEGORY</div>
@@ -104,6 +99,13 @@ function updateDataStatus() {
         <div class="detail-row animate-in" style="animation-delay: ${getDelay()};">
              <div class="detail-label">TYPE</div>
             <div class="detail-value">${item['TYPE OF SALES'] || 'N/A'}</div>
+        </div>
+
+        <div class="detail-row animate-in" style="animation-delay: ${getDelay()};">
+             <div class="detail-label">GSTIN</div>
+            <div class="detail-value" onclick="copyToClipboard('${item['GSTIN(IF Applicable)'] || ''}')" style="cursor:pointer; display:flex; align-items:center; justify-content:flex-end; gap:8px;">
+                ${item['GSTIN(IF Applicable)'] || 'N/A'} <i class="fa-regular fa-copy" style="font-size:0.8em; opacity:0.5;"></i>
+            </div>
         </div>
         
         <div class="animate-in" style="margin-top:24px; display:grid; grid-template-columns: 1fr 1fr; gap:12px; animation-delay: ${getDelay()};">
@@ -456,12 +458,7 @@ window.viewDetails = (location, itemStr) => {
             <p style="color:var(--text-secondary); font-size:1.1rem;"><i class="fa-solid fa-location-dot" style="margin-right:5px; font-size:0.9em;"></i>${item.PLACE}</p>
         </div>
 
-        <div class="detail-row animate-in" style="animation-delay: ${getDelay()};">
-            <div class="detail-label">CONTACT</div>
-            <div class="detail-value" onclick="copyToClipboard('${item['MOBILE NUMBER']}')" style="cursor:pointer; display:flex; align-items:center; justify-content:flex-end; gap:8px;">
-                ${maskPhoneNumber(item['MOBILE NUMBER'])} <i class="fa-regular fa-copy" style="font-size:0.8em; opacity:0.5;"></i>
-            </div>
-        </div>
+
 
         <div class="detail-row animate-in" style="animation-delay: ${getDelay()};">
             <div class="detail-label">CATEGORY</div>
