@@ -5040,19 +5040,19 @@ window.customersData = [
         "LOCATION": "https://maps.app.goo.gl/3zoLeBG1a6vMuMrK8?g_st=ic"
     },
     {
-        "CUSTOMER NAME": "",
-        "PLACE": "",
-        "MOBILE NUMBER": "",
-        "ROUTE": "",
-        "SALES EXECUTIVE": "",
-        "CATEGORY": "",
-        "TYPE OF SALES": "",
-        "RATE GREEN": "",
-        "RATE ORANGE": "",
+        "CUSTOMER NAME": "KODUVAMBAN STORE",
+        "PLACE": "VAILATHUR",
+        "MOBILE NUMBER": "9846002923",
+        "ROUTE": "TIRUR",
+        "SALES EXECUTIVE": "NASEEF",
+        "CATEGORY": "WHOLSALE",
+        "TYPE OF SALES": "REGULAR",
+        "RATE GREEN": "53",
+        "RATE ORANGE": "65",
         "GSTIN(IF Applicable)": "",
         "SCHEME": "",
         "PHOTO": "",
-        "LOCATION": ""
+        "LOCATION": "https://maps.app.goo.gl/3uxBhtTcA3pBsRnH9"
     },
     {
         "CUSTOMER NAME": "",
@@ -5099,4 +5099,5 @@ window.customersData = [
         "PHOTO": "",
         "LOCATION": ""
     }
+
 ]
