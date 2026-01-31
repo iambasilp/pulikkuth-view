@@ -34,7 +34,7 @@ function checkLogin() {
 }
 
 function handleLogin() {
-    const username = els.loginUser.value.trim();
+    const username = els.loginUser.value.trim().toLowerCase();
     const pin = els.loginPin.value.trim();
 
     // Credentials: admin / 1234
