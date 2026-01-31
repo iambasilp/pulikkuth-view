@@ -36,65 +36,63 @@
     <link rel="icon" type="image/x-icon" href="favicon.ico">
 </head>
 
-<body>
-    <button class="theme-toggle" id="themeToggle" title="Toggle Theme">
-        <i class="fa-solid fa-moon"></i>
-    </button>
-    <div class="search-container">
-        <img src="logo.png" alt="Ogito Logo" class="app-logo">
-        <h2 class="search-subtitle">Customer Search</h2>
-        <p id="dataStatus"
-            style="font-size:0.8rem; color:var(--text-secondary); margin-bottom:20px; opacity:0; transition:opacity 0.5s;">
-            Loading database...</p>
 
-        <div class="search-box-wrapper">
-            <i class="fa-solid fa-magnifying-glass search-icon"></i>
-            <input type="text" id="searchInput" placeholder="Search by Name, Place, or Phone..." autocomplete="off">
-            <button id="voiceBtn" class="voice-btn" title="Voice Search"><i class="fa-solid fa-microphone"></i></button>
-        </div>
+<div class="search-container">
+    <img src="logo.png" alt="Ogito Logo" class="app-logo">
+    <h2 class="search-subtitle">Customer Search</h2>
+    <p id="dataStatus"
+        style="font-size:0.8rem; color:var(--text-secondary); margin-bottom:20px; opacity:0; transition:opacity 0.5s;">
+        Loading database...</p>
 
-
-
-        <div class="search-results-dropdown hidden" id="searchResults">
-            <!-- Results injected here -->
-        </div>
+    <div class="search-box-wrapper">
+        <i class="fa-solid fa-magnifying-glass search-icon"></i>
+        <input type="text" id="searchInput" placeholder="Search by Name, Place, or Phone..." autocomplete="off">
+        <button id="clearSearchBtn" class="clear-btn hidden" title="Clear Search"><i
+                class="fa-solid fa-xmark"></i></button>
+        <button id="voiceBtn" class="voice-btn" title="Voice Search"><i class="fa-solid fa-microphone"></i></button>
     </div>
 
-    <!-- Details Drawer (Hidden by default) -->
-    <div class="drawer hidden" id="detailsDrawer">
-        <div class="drawer-header" style="justify-content: flex-end; gap: 10px;">
-            <!-- Actions -->
-            <button class="icon-btn" onclick="shareContact()"><i class="fa-solid fa-share-nodes"></i></button>
-            <button class="icon-btn" id="closeDrawer" style="margin-left:5px;"><i
-                    class="fa-solid fa-xmark"></i></button>
+
+
+    <div class="search-results-dropdown hidden" id="searchResults">
+        <!-- Results injected here -->
+    </div>
+</div>
+
+<!-- Details Drawer (Hidden by default) -->
+<div class="drawer hidden" id="detailsDrawer">
+    <div class="drawer-header" style="justify-content: flex-end; gap: 10px;">
+        <!-- Actions -->
+        <button class="icon-btn" onclick="shareContact()"><i class="fa-solid fa-share-nodes"></i></button>
+        <button class="icon-btn" id="closeDrawer" style="margin-left:5px;"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div class="drawer-body">
+        <div class="drawer-content" id="drawerContent">
+            <!-- Dynamic Content -->
         </div>
-        <div class="drawer-body">
-            <div class="drawer-content" id="drawerContent">
-                <!-- Dynamic Content -->
-            </div>
-            <div class="drawer-footer" style="flex-wrap:wrap;">
-                <a href="#" class="btn btn-outline" id="drawerCall"><i class="fa-solid fa-phone"></i> Call</a>
-                <a href="#" class="btn btn-primary" id="drawerLoc" target="_blank"><i
-                        class="fa-solid fa-map-location-dot"></i> Map</a>
-            </div>
+        <div class="drawer-footer" style="flex-wrap:wrap;">
+            <a href="#" class="btn btn-outline" id="drawerCall"><i class="fa-solid fa-phone"></i> Call</a>
+            <a href="#" class="btn btn-primary" id="drawerLoc" target="_blank"><i
+                    class="fa-solid fa-map-location-dot"></i> Map</a>
         </div>
     </div>
+</div>
 
-    <script src="data.js"></script>
-    <script src="script.js"></script>
-    <script>
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('./sw.js')
-                    .then(registration => {
-                        console.log('ServiceWorker registration successful');
-                    })
-                    .catch(err => {
-                        console.log('ServiceWorker registration failed: ', err);
-                    });
-            });
-        }
-    </script>
+<script src="data.js"></script>
+<script src="script.js"></script>
+<script>
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('./sw.js')
+                .then(registration => {
+                    console.log('ServiceWorker registration successful');
+                })
+                .catch(err => {
+                    console.log('ServiceWorker registration failed: ', err);
+                });
+        });
+    }
+</script>
 </body>
 
 </html>

@@ -11,43 +11,16 @@ const els = {
     drawerCall: document.getElementById('drawerCall'),
     drawerLoc: document.getElementById('drawerLoc'),
     voiceBtn: document.getElementById('voiceBtn'),
-    themeToggle: document.getElementById('themeToggle')
+    clearBtn: document.getElementById('clearSearchBtn')
+
 };
 
-// Theme Logic
-const theme = {
-    toggle: () => {
-        const isDark = document.documentElement.getAttribute('data-theme') !== 'light';
-        const newTheme = isDark ? 'light' : 'dark';
-        document.documentElement.setAttribute('data-theme', newTheme);
-        localStorage.setItem('theme', newTheme);
-        theme.updateIcon(newTheme);
-    },
-    init: () => {
-        const savedTheme = localStorage.getItem('theme');
-        // Default to dark if no match, matching original design
-        if (savedTheme === 'light') {
-            document.documentElement.setAttribute('data-theme', 'light');
-            theme.updateIcon('light');
-        } else {
-            document.documentElement.removeAttribute('data-theme');
-            theme.updateIcon('dark');
-        }
-    },
-    updateIcon: (mode) => {
-        const icon = els.themeToggle.querySelector('i');
-        if (mode === 'light') {
-            icon.className = 'fa-solid fa-sun';
-        } else {
-            icon.className = 'fa-solid fa-moon';
-        }
-    }
-};
+
 
 // Initialize
 function init() {
     setGreeting();
-    theme.init();
+
     updateDataStatus();
     setupListeners();
     setupVoiceSearch();
@@ -189,9 +162,16 @@ function setGreeting() {
 }
 
 function setupListeners() {
-    // Search Input Listener
     els.input.addEventListener('input', (e) => {
         const query = e.target.value.trim().toLowerCase();
+
+
+        // Show/Hide Clear Button
+        if (query.length > 0) {
+            els.clearBtn.classList.remove('hidden');
+        } else {
+            els.clearBtn.classList.add('hidden');
+        }
 
         if (query.length === 0) {
             showHistory(); // Back to history if cleared
@@ -201,9 +181,23 @@ function setupListeners() {
         debouncedFilter(query);
     });
 
+    // Clear Button Listener
+    if (els.clearBtn) {
+        els.clearBtn.addEventListener('click', () => {
+            els.input.value = '';
+            els.clearBtn.classList.add('hidden');
+            els.input.focus();
+            showHistory();
+        });
+    }
+
     // Close Dropdown when clicking outside
     document.addEventListener('click', (e) => {
-        if (!els.input.contains(e.target) && !els.results.contains(e.target) && e.target.id !== 'voiceBtn' && !e.target.closest('#voiceBtn')) {
+        if (!els.input.contains(e.target) &&
+            !els.results.contains(e.target) &&
+            !els.clearBtn.contains(e.target) &&
+            e.target.id !== 'voiceBtn' &&
+            !e.target.closest('#voiceBtn')) {
             hideResults();
         }
     });
@@ -212,6 +206,7 @@ function setupListeners() {
     els.input.addEventListener('focus', () => {
         if (els.input.value.trim().length > 0) {
             els.results.classList.remove('hidden');
+            els.clearBtn.classList.remove('hidden');
         } else {
             showHistory();
         }
@@ -229,10 +224,7 @@ function setupListeners() {
         }
     });
 
-    // Theme Toggle
-    if (els.themeToggle) {
-        els.themeToggle.addEventListener('click', theme.toggle);
-    }
+
 }
 
 // Keyboard Navigation
@@ -330,7 +322,8 @@ function showHistory() {
 // --- Highlighting Logic ---
 function highlightText(text, query) {
     if (!query || query.length < 1) return text;
-    const regex = new RegExp(`(${query})`, 'gi');
+    const safeQuery = escapeRegExp(query);
+    const regex = new RegExp(`(${safeQuery})`, 'gi');
     return text.replace(regex, '<span class="highlight-match">$1</span>');
 }
 
@@ -339,21 +332,43 @@ const debouncedFilter = debounce((query) => {
     renderResults(matches, query);
 }, 250); // 250ms delay for snappiness
 
+// --- Filter Logic ---
+
+function escapeRegExp(string) {
+    return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // Escape special chars
+}
+
 function filterData(query) {
     // Max results to show in dropdown
     const MAX_RESULTS = 20;
+    const safeQuery = escapeRegExp(query);
 
-    return data.filter(item => {
+    // Priorities
+    // 1. Exact Name Match (Starts with)
+    // 2. Name Contains
+    // 3. Place/Route/Phone Match
+
+    const priority1 = [];
+    const priority2 = [];
+    const priority3 = [];
+
+    data.forEach(item => {
         const name = (item['CUSTOMER NAME'] || '').toLowerCase();
         const place = (item['PLACE'] || '').toLowerCase();
-        const phone = (item['MOBILE NUMBER'] || '');
+        const phone = (item['MOBILE NUMBER'] || '').toString();
         const route = (item['ROUTE'] || '').toLowerCase();
 
-        return name.includes(query) ||
-            place.includes(query) ||
-            phone.includes(query) ||
-            route.includes(query);
-    }).slice(0, MAX_RESULTS);
+        if (name.startsWith(query)) {
+            priority1.push(item);
+        } else if (name.includes(query)) {
+            priority2.push(item);
+        } else if (place.includes(query) || phone.includes(query) || route.includes(query)) {
+            priority3.push(item);
+        }
+    });
+
+    // Combine and slice
+    return [...priority1, ...priority2, ...priority3].slice(0, MAX_RESULTS);
 }
 
 function renderResults(results, query = '') {

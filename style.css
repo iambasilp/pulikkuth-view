@@ -1,28 +1,4 @@
 :root {
-    --bg-color: #0f172a;
-    --card-bg: #1e293b;
-    --text-primary: #f8fafc;
-    --text-secondary: #94a3b8;
-    --accent: #6366f1;
-    --accent-hover: #4f46e5;
-    --border: #334155;
-    --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-
-    /* Dynamic Colors */
-    --gradient-start: #1e293b;
-    --gradient-end: #0f172a;
-    --input-bg: rgba(30, 41, 59, 0.8);
-    --input-focus-bg: rgba(30, 41, 59, 1);
-    --surface-hover: rgba(255, 255, 255, 0.1);
-    /* previously hardcoded 0.1 opacity white */
-    --result-hover: #2d3748;
-    --scrollbar-thumb: rgba(255, 255, 255, 0.1);
-    --scrollbar-thumb-hover: rgba(255, 255, 255, 0.2);
-    --mobile-drawer-footer: rgba(30, 41, 59, 0.5);
-    --mobile-handle: rgba(255, 255, 255, 0.2);
-}
-
-[data-theme="light"] {
     --bg-color: #f8fafc;
     --card-bg: #ffffff;
     --text-primary: #0f172a;
@@ -32,6 +8,7 @@
     --border: #e2e8f0;
     --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
 
+    /* Dynamic Colors */
     --gradient-start: #f1f5f9;
     --gradient-end: #e2e8f0;
     --input-bg: rgba(255, 255, 255, 0.8);
@@ -169,6 +146,34 @@ body {
         transform: translateY(-50%) scale(1);
         box-shadow: 0 0 0 0 rgba(239, 68, 68, 0);
     }
+}
+
+.clear-btn {
+    position: absolute;
+    right: 50px;
+    /* Left of voice btn */
+    top: 50%;
+    transform: translateY(-50%);
+    background: transparent;
+    border: none;
+    color: var(--text-secondary);
+    font-size: 1rem;
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 50%;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.clear-btn:hover {
+    color: var(--text-primary);
+    background: var(--surface-hover);
+}
+
+.clear-btn.hidden {
+    display: none;
 }
 
 /* --- Dropdown Results --- */
@@ -646,35 +651,4 @@ body {
     height: 1px;
     background: var(--border);
     margin: 8px 0;
-}
-
-/* Theme Toggle Button */
-.theme-toggle {
-    position: absolute;
-    top: 20px;
-    right: 20px;
-    background: transparent;
-    border: none;
-    color: var(--text-secondary);
-    font-size: 1.25rem;
-    cursor: pointer;
-    padding: 10px;
-    border-radius: 50%;
-
-    transition: all 0.2s ease;
-    z-index: 1001;
-    /* Above drawer logic if needed, though drawer is higher */
-}
-
-.theme-toggle:hover {
-    background-color: var(--surface-hover);
-    color: var(--text-primary);
-    transform: rotate(15deg);
-}
-
-@media (max-width: 600px) {
-    .theme-toggle {
-        top: 15px;
-        right: 15px;
-    }
 }
