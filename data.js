@@ -420,6 +420,21 @@ window.customersData = [
         "LOCATION": "https://maps.app.goo.gl/wnVQHaWaCiEYJFRq5"
     },
     {
+        "CUSTOMER NAME": "Bake City Vengara",
+        "PLACE": "Vengara",
+        "MOBILE NUMBER": "9947000142",
+        "ROUTE": "TIRUR",
+        "SALES EXECUTIVE": "NASEEF",
+        "CATEGORY": "WHOLESALE",
+        "TYPE OF SALES": "REGULAR",
+        "RATE GREEN": "52",
+        "RATE ORANGE": "65",
+        "GSTIN(IF Applicable)": "",
+        "SCHEME": "",
+        "PHOTO": "",
+        "LOCATION": "https://maps.app.goo.gl/9fYE22MBW8ZzAGYr6"
+    },
+    {
         "CUSTOMER NAME": "CN Stationary",
         "PLACE": "Vaniyamkulam",
         "MOBILE NUMBER": "9846929913",

@@ -10,12 +10,44 @@ const els = {
     closeDrawer: document.getElementById('closeDrawer'),
     drawerCall: document.getElementById('drawerCall'),
     drawerLoc: document.getElementById('drawerLoc'),
-    voiceBtn: document.getElementById('voiceBtn')
+    voiceBtn: document.getElementById('voiceBtn'),
+    themeToggle: document.getElementById('themeToggle')
+};
+
+// Theme Logic
+const theme = {
+    toggle: () => {
+        const isDark = document.documentElement.getAttribute('data-theme') !== 'light';
+        const newTheme = isDark ? 'light' : 'dark';
+        document.documentElement.setAttribute('data-theme', newTheme);
+        localStorage.setItem('theme', newTheme);
+        theme.updateIcon(newTheme);
+    },
+    init: () => {
+        const savedTheme = localStorage.getItem('theme');
+        // Default to dark if no match, matching original design
+        if (savedTheme === 'light') {
+            document.documentElement.setAttribute('data-theme', 'light');
+            theme.updateIcon('light');
+        } else {
+            document.documentElement.removeAttribute('data-theme');
+            theme.updateIcon('dark');
+        }
+    },
+    updateIcon: (mode) => {
+        const icon = els.themeToggle.querySelector('i');
+        if (mode === 'light') {
+            icon.className = 'fa-solid fa-sun';
+        } else {
+            icon.className = 'fa-solid fa-moon';
+        }
+    }
 };
 
 // Initialize
 function init() {
     setGreeting();
+    theme.init();
     updateDataStatus();
     setupListeners();
     setupVoiceSearch();
@@ -194,6 +226,11 @@ function setupListeners() {
             hideResults();
         }
     });
+
+    // Theme Toggle
+    if (els.themeToggle) {
+        els.themeToggle.addEventListener('click', theme.toggle);
+    }
 }
 
 // Keyboard Navigation
@@ -442,7 +479,7 @@ window.viewDetails = (location, itemStr) => {
         </div>
 
         <div class="detail-row animate-in" style="animation-delay: ${getDelay()};">
-             <div class="detail-label">TYPE</div>
+             <div class="detail-label"> CUSTOMER TYPE</div>
             <div class="detail-value">${item['TYPE OF SALES'] || 'N/A'}</div>
         </div>
         

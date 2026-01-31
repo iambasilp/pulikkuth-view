@@ -7,6 +7,41 @@
     --accent-hover: #4f46e5;
     --border: #334155;
     --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+
+    /* Dynamic Colors */
+    --gradient-start: #1e293b;
+    --gradient-end: #0f172a;
+    --input-bg: rgba(30, 41, 59, 0.8);
+    --input-focus-bg: rgba(30, 41, 59, 1);
+    --surface-hover: rgba(255, 255, 255, 0.1);
+    /* previously hardcoded 0.1 opacity white */
+    --result-hover: #2d3748;
+    --scrollbar-thumb: rgba(255, 255, 255, 0.1);
+    --scrollbar-thumb-hover: rgba(255, 255, 255, 0.2);
+    --mobile-drawer-footer: rgba(30, 41, 59, 0.5);
+    --mobile-handle: rgba(255, 255, 255, 0.2);
+}
+
+[data-theme="light"] {
+    --bg-color: #f8fafc;
+    --card-bg: #ffffff;
+    --text-primary: #0f172a;
+    --text-secondary: #64748b;
+    --accent: #4f46e5;
+    --accent-hover: #4338ca;
+    --border: #e2e8f0;
+    --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+
+    --gradient-start: #f1f5f9;
+    --gradient-end: #e2e8f0;
+    --input-bg: rgba(255, 255, 255, 0.8);
+    --input-focus-bg: #ffffff;
+    --surface-hover: rgba(0, 0, 0, 0.05);
+    --result-hover: #f1f5f9;
+    --scrollbar-thumb: rgba(0, 0, 0, 0.2);
+    --scrollbar-thumb-hover: rgba(0, 0, 0, 0.3);
+    --mobile-drawer-footer: rgba(255, 255, 255, 0.8);
+    --mobile-handle: rgba(0, 0, 0, 0.2);
 }
 
 * {
@@ -18,7 +53,7 @@
 body {
     font-family: 'Inter', system-ui, -apple-system, sans-serif;
     background-color: var(--bg-color);
-    background: radial-gradient(circle at 50% 10%, #1e293b 0%, #0f172a 100%);
+    background: radial-gradient(circle at 50% 10%, var(--gradient-start) 0%, var(--gradient-end) 100%);
     color: var(--text-primary);
     height: 100vh;
     display: flex;
@@ -76,7 +111,7 @@ body {
     padding: 18px 20px 18px 55px;
     /* Space for icon */
     font-size: 1.1rem;
-    background-color: rgba(30, 41, 59, 0.8);
+    background-color: var(--input-bg);
     backdrop-filter: blur(8px);
     border: 1px solid var(--border);
     color: var(--text-primary);
@@ -88,7 +123,7 @@ body {
 }
 
 #searchInput:focus {
-    background-color: rgba(30, 41, 59, 1);
+    background-color: var(--input-focus-bg);
     border-color: var(--accent);
     box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.25), 0 10px 20px -5px rgba(0, 0, 0, 0.2);
 }
@@ -110,7 +145,7 @@ body {
 
 .voice-btn:hover {
     color: var(--accent);
-    background: rgba(255, 255, 255, 0.1);
+    background: var(--surface-hover);
 }
 
 .voice-btn.listening {
@@ -172,12 +207,12 @@ body {
 }
 
 ::-webkit-scrollbar-thumb {
-    background: rgba(255, 255, 255, 0.1);
+    background: var(--scrollbar-thumb);
     border-radius: 3px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-    background: rgba(255, 255, 255, 0.2);
+    background: var(--scrollbar-thumb-hover);
 }
 
 /* Result Item */
@@ -196,7 +231,7 @@ body {
 }
 
 .result-item:hover {
-    background-color: #2d3748;
+    background-color: var(--result-hover);
     transform: scale(1.005);
     z-index: 1;
     /* Ensure scale doesn't clip */
@@ -279,7 +314,7 @@ body {
 }
 
 .icon-btn:hover {
-    background-color: rgba(255, 255, 255, 0.1);
+    background-color: var(--surface-hover);
     color: var(--text-primary);
 }
 
@@ -392,7 +427,7 @@ body {
 
 .btn-outline:hover {
     border-color: var(--text-secondary);
-    background-color: rgba(255, 255, 255, 0.05);
+    background-color: var(--surface-hover);
 }
 
 /* Responsive */
@@ -450,9 +485,10 @@ body {
         transform: translateY(105%);
         /* Ensure fully hidden */
         border-left: none;
-        border-top: 1px solid rgba(255, 255, 255, 0.15);
+        border-top: 1px solid var(--mobile-handle);
+        /* Using handle opacity as it's similar */
         box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.6);
-        background-color: #1e293b;
+        background-color: var(--card-bg);
         /* Ensure opaque */
         display: flex;
         flex-direction: column;
@@ -479,7 +515,7 @@ body {
         transform: translateX(-50%);
         width: 40px;
         height: 4px;
-        background-color: rgba(255, 255, 255, 0.2);
+        background-color: var(--mobile-handle);
         border-radius: 10px;
     }
 
@@ -488,7 +524,7 @@ body {
         /* Let flexbox handle it */
         width: 40px;
         height: 40px;
-        background: rgba(255, 255, 255, 0.05);
+        background: var(--surface-hover);
         display: flex;
         align-items: center;
         justify-content: center;
@@ -509,7 +545,7 @@ body {
     .drawer-footer {
         padding: 15px 20px;
         padding-bottom: calc(15px + env(safe-area-inset-bottom, 10px));
-        background: rgba(30, 41, 59, 0.5);
+        background: var(--mobile-drawer-footer);
         /* Subtle distinction */
         backdrop-filter: blur(10px);
     }
@@ -610,4 +646,35 @@ body {
     height: 1px;
     background: var(--border);
     margin: 8px 0;
+}
+
+/* Theme Toggle Button */
+.theme-toggle {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background: transparent;
+    border: none;
+    color: var(--text-secondary);
+    font-size: 1.25rem;
+    cursor: pointer;
+    padding: 10px;
+    border-radius: 50%;
+
+    transition: all 0.2s ease;
+    z-index: 1001;
+    /* Above drawer logic if needed, though drawer is higher */
+}
+
+.theme-toggle:hover {
+    background-color: var(--surface-hover);
+    color: var(--text-primary);
+    transform: rotate(15deg);
+}
+
+@media (max-width: 600px) {
+    .theme-toggle {
+        top: 15px;
+        right: 15px;
+    }
 }
