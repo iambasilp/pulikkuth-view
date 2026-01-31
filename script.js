@@ -11,14 +11,56 @@ const els = {
     drawerCall: document.getElementById('drawerCall'),
     drawerLoc: document.getElementById('drawerLoc'),
     voiceBtn: document.getElementById('voiceBtn'),
-    clearBtn: document.getElementById('clearSearchBtn')
-
+    clearBtn: document.getElementById('clearSearchBtn'),
+    // Login & Logout Elements (Grabbed safely later if needed, but IDs are in HTML)
+    loginOverlay: document.getElementById('loginOverlay'),
+    loginUser: document.getElementById('loginUser'),
+    loginPin: document.getElementById('loginPin'),
+    loginBtn: document.getElementById('loginBtn'),
+    loginError: document.getElementById('loginError'),
+    logoutBtn: document.getElementById('mainLogoutBtn')
 };
 
+// Login Logic
+function checkLogin() {
+    const isLoggedIn = localStorage.getItem('isLoggedIn');
+    if (isLoggedIn === 'true') {
+        els.loginOverlay.classList.add('hidden');
+        if (els.logoutBtn) els.logoutBtn.classList.remove('hidden');
+    } else {
+        els.loginOverlay.classList.remove('hidden');
+        if (els.logoutBtn) els.logoutBtn.classList.add('hidden');
+    }
+}
 
+function handleLogin() {
+    const username = els.loginUser.value.trim();
+    const pin = els.loginPin.value.trim();
+
+    // Credentials: admin / 1234
+    if (username === 'admin' && pin === '4822') {
+        localStorage.setItem('isLoggedIn', 'true');
+        els.loginOverlay.classList.add('hidden');
+        els.loginUser.value = '';
+        els.loginPin.value = '';
+        els.loginError.classList.add('hidden');
+        if (els.logoutBtn) els.logoutBtn.classList.remove('hidden');
+    } else {
+        els.loginError.classList.remove('hidden');
+        els.loginError.style.animation = 'none';
+        els.loginError.offsetHeight;
+        els.loginError.style.animation = 'shake 0.3s ease';
+    }
+}
+
+function handleLogout() {
+    localStorage.removeItem('isLoggedIn');
+    location.reload(); // Reload to secure state
+}
 
 // Initialize
 function init() {
+    checkLogin(); // Check immediately
     setGreeting();
 
     updateDataStatus();
@@ -162,6 +204,17 @@ function setGreeting() {
 }
 
 function setupListeners() {
+    // Login Listeners
+    if (els.loginBtn) els.loginBtn.addEventListener('click', handleLogin);
+    if (els.loginPin) {
+        els.loginPin.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') handleLogin();
+        });
+    }
+    // Logout Listener
+    if (els.logoutBtn) els.logoutBtn.addEventListener('click', handleLogout);
+
+    // Search Input Listener
     els.input.addEventListener('input', (e) => {
         const query = e.target.value.trim().toLowerCase();
 

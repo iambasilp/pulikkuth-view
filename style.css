@@ -435,6 +435,121 @@ body {
     background-color: var(--surface-hover);
 }
 
+/* --- Login Overlay --- */
+.login-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    /* Fallback */
+    height: 100dvh;
+    background-color: var(--bg-color);
+    z-index: 9999;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    backdrop-filter: blur(10px);
+    padding: 20px;
+}
+
+.login-overlay.hidden {
+    display: none;
+}
+
+.login-card {
+    background-color: var(--card-bg);
+    padding: 40px;
+    border-radius: 24px;
+    border: 1px solid var(--border);
+    text-align: center;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.1);
+    width: 90%;
+    max-width: 400px;
+    animation: fadeIn 0.5s ease;
+}
+
+.login-logo {
+    width: 80px;
+    margin-bottom: 20px;
+}
+
+.login-card h2 {
+    color: var(--text-primary);
+    margin-bottom: 8px;
+    font-size: 1.5rem;
+}
+
+.login-card p {
+    color: var(--text-secondary);
+    margin-bottom: 30px;
+    font-size: 0.95rem;
+}
+
+.login-form input {
+    width: 100%;
+    padding: 14px 20px;
+    margin-bottom: 16px;
+    background-color: var(--input-bg);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    color: var(--text-primary);
+    font-size: 1rem;
+    outline: none;
+    transition: all 0.2s;
+}
+
+.login-form input:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.2);
+}
+
+.login-form button {
+    width: 100%;
+    padding: 16px;
+    font-size: 1.1rem;
+    margin-top: 10px;
+}
+
+.login-error {
+    color: #ef4444;
+    font-size: 0.9rem;
+    margin-top: 15px;
+    animation: shake 0.3s ease;
+}
+
+@keyframes shake {
+
+    0%,
+    100% {
+        transform: translateX(0);
+    }
+
+    25% {
+        transform: translateX(-5px);
+    }
+
+    75% {
+        transform: translateX(5px);
+    }
+}
+
+/* Response/Mobile Tweaks for Login */
+@media (max-width: 600px) {
+    .login-form input {
+        font-size: 16px;
+        /* Prevent Zoom */
+    }
+
+    .login-card {
+        padding: 30px 20px;
+        width: 100%;
+        max-width: 350px;
+        max-height: 85dvh;
+        overflow-y: auto;
+    }
+}
+
 /* Responsive */
 @media (max-width: 600px) {
     .search-container {

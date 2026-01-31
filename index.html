@@ -33,11 +33,15 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <link rel="stylesheet" href="style.css">
-    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <link rel="icon" type="image/png" href="logo.png">
 </head>
 
 
 <div class="search-container">
+    <div style="position:absolute; top:20px; right:20px;">
+        <button id="mainLogoutBtn" class="icon-btn hidden" title="Logout"><i
+                class="fa-solid fa-right-from-bracket"></i></button>
+    </div>
     <img src="logo.png" alt="Ogito Logo" class="app-logo">
     <h2 class="search-subtitle">Customer Search</h2>
     <p id="dataStatus"
@@ -74,6 +78,21 @@
             <a href="#" class="btn btn-outline" id="drawerCall"><i class="fa-solid fa-phone"></i> Call</a>
             <a href="#" class="btn btn-primary" id="drawerLoc" target="_blank"><i
                     class="fa-solid fa-map-location-dot"></i> Map</a>
+        </div>
+    </div>
+</div>
+
+<!-- Login Overlay -->
+<div id="loginOverlay" class="login-overlay hidden">
+    <div class="login-card">
+        <img src="logo.png" alt="Logo" class="login-logo">
+        <h2>Welcome Back</h2>
+        <p>Enter credentials to access</p>
+        <div class="login-form">
+            <input type="text" id="loginUser" placeholder="Username" autocomplete="off">
+            <input type="password" id="loginPin" placeholder="PIN" maxlength="4" pattern="\d*">
+            <button id="loginBtn" class="btn btn-primary">Login</button>
+            <p id="loginError" class="login-error hidden">Invalid Username or PIN</p>
         </div>
     </div>
 </div>
