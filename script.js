@@ -38,7 +38,7 @@ function handleLogin() {
     const pin = els.loginPin.value.trim();
 
     // Credentials: admin / 1234
-    if (username === 'admin' && pin === '4822') {
+    if (username === 'ogito' && pin === '4822') {
         localStorage.setItem('isLoggedIn', 'true');
         els.loginOverlay.classList.add('hidden');
         els.loginUser.value = '';
